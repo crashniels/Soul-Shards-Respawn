@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "info.tehnut.soulshards.core.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "soulshards-refmap.json",
+  "mixins": [
+    "MixinEntityLiving",
+    "MobSpawnerLogicEntityId",
+    "MixinAnvilContainer"
+  ],
+  "client": [
+    "client.MixinItemRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

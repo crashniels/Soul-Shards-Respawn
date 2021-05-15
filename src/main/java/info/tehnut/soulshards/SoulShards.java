@@ -11,6 +11,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.GameRules.Rule;
 
 import java.io.File;
 
@@ -19,7 +20,7 @@ public class SoulShards implements ModInitializer {
     public static final String MODID = "soulshards";
     public static final ConfigSoulShards CONFIG = JsonUtil.fromJson(TypeToken.get(ConfigSoulShards.class), new File(FabricLoader.getInstance().getConfigDirectory(), MODID + "/" + MODID + ".json"), new ConfigSoulShards());
     public static TrackedData<Boolean> cageBornTag;
-    public static GameRules.RuleKey<GameRules.BooleanRule> allowCageSpawns;
+    public static Rule<GameRules.BooleanRule> allowCageSpawns;
 
     @Override
     public void onInitialize() {

@@ -35,8 +35,8 @@ public class ItemVileSword extends SwordItem implements ISoulWeapon {
         }
 
         @Override
-        public float getMiningSpeed() {
-            return ToolMaterials.IRON.getMiningSpeed();
+        public float getMiningSpeedMultiplier() {
+            return ToolMaterials.IRON.getMiningSpeedMultiplier();
         }
 
         @Override

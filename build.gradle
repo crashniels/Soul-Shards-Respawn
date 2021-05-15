@@ -1,7 +1,7 @@
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-    id 'fabric-loom' version '0.2.6-SNAPSHOT'
-    id "maven-publish"
+    //id "com.matthewprenger.cursegradle" version "1.4.0"
+    id 'fabric-loom' version '0.6-SNAPSHOT'
+    //id "maven-publish"
 }
 
 sourceCompatibility = 1.8
@@ -11,22 +11,25 @@ def build_number = System.getenv('BUILD_NUMBER') != null ? System.getenv('BUILD_
 
 group = package_group
 archivesBaseName = "${mod_name}-fabric"
-version = "${mc_version}-${mod_version}-${build_number}"
+version = "${minecraft_version}-${mod_version}-${build_number}"
 
 minecraft {
     refmapName = mod_name.toLowerCase() + '-refmap.json'
 }
 
 repositories {
-    maven { url "https://tehnut.info/maven" }
+    //maven { url "https://tehnut.info/maven" }
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${mc_version}"
-    mappings "net.fabricmc:yarn:${mc_version}+build.${mappings_version}"
-    modCompile "net.fabricmc:fabric-loader:${loader_version}"
-    modCompile "net.fabricmc.fabric-api:fabric-api:${api_version}"
-    modCompile "mcp.mobius.waila:Hwyla:${waila_version}"
+    minecraft "com.mojang:minecraft:1.16.5"
+    mappings "net.fabricmc:yarn:1.16.5+build.9:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.11.3"
+            
+    //Fabric api
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.34.2+1.16"
+
+    //modCompile "mcp.mobius.waila:Hwyla:${waila_version}"
 }
 
 task sourcesJar(type: Jar) {
@@ -40,7 +43,7 @@ task apiJar(type: Jar) {
     include 'info/tehnut/soulshards/api/**/*'
     classifier = 'api'
 }
-
+/*
 publishing {
     tasks.publish.dependsOn 'build'
     publications {
@@ -115,3 +118,4 @@ String getChangelogText() {
     }
     return str
 }
+*/
