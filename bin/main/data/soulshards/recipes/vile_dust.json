@@ -1,9 +1,0 @@
-{
-  "type": "smelting",
-  "ingredient": {
-    "item": "minecraft:soul_sand"
-  },
-  "result": "soulshards:vile_dust",
-  "experience": 0.75,
-  "cookingtime": 400
-}
