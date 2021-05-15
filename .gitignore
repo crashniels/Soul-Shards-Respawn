@@ -19,6 +19,7 @@ run/
 
 # Directories
 /.gradle/
+/.vscode/
 /build/
 /eclipse/
 /run/
