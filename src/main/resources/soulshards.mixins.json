@@ -5,8 +5,7 @@
   "refmap": "soulshards-refmap.json",
   "mixins": [
     "MixinEntityLiving",
-    "MobSpawnerLogicEntityId",
-    "MixinAnvilContainer"
+    "MobSpawnerLogicEntityId"
   ],
   "client": [
     "client.MixinItemRenderer"

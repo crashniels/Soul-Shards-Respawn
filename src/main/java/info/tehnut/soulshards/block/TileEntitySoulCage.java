@@ -10,10 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
-import net.minecraft.inventory.BasicInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.LightType;
+import net.minecraft.world.ServerWorldAccess;
 
 public class TileEntitySoulCage extends BlockEntity implements Tickable {
 
@@ -33,9 +34,9 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     public TileEntitySoulCage() {
         super(RegistrarSoulShards.SOUL_CAGE_TE);
 
-        this.inventory = new BasicInventory(1) {
+        this.inventory = new SimpleInventory(1){
             @Override
-            public boolean isValidInvStack(int slot, ItemStack stack) {
+            public boolean isValid(int slot, ItemStack stack) {
                 if (!(stack.getItem() instanceof ItemSoulShard))
                     return false;
 
@@ -69,17 +70,17 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     }
 
     @Override
-    public void fromTag(CompoundTag tag) {
-        super.fromTag(tag);
+    public void fromTag(BlockState state, CompoundTag tag) {
+        super.fromTag(state, tag);
 
         if (tag.contains("shard"))
-            inventory.setInvStack(0, ItemStack.fromTag(tag.getCompound("shard")));
+            inventory.setStack(0, ItemStack.fromTag(tag.getCompound("shard")));
         this.active = tag.getBoolean("active");
     }
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        ItemStack shardStack = inventory.getInvStack(0);
+        ItemStack shardStack = inventory.getStack(0);
         if (!shardStack.isEmpty())
             tag.put("shard", shardStack.toTag(new CompoundTag()));
         tag.putBoolean("active", active);
@@ -117,13 +118,13 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
                     if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !entityLiving.canUsePortals()) // canUsePortals -> isNonBoss
                         continue;
 
-                    ActionResult result = CageSpawnEvent.CAGE_SPAWN.invoker().onCageSpawn(binding, inventory.getInvStack(0), entityLiving);
+                    ActionResult result = CageSpawnEvent.CAGE_SPAWN.invoker().onCageSpawn(binding, inventory.getStack(0), entityLiving);
                     if (result == ActionResult.FAIL)
                         continue spawnLoop;
 
                     getWorld().spawnEntity(entityLiving);
                     if (entityLiving instanceof MobEntity)
-                        ((MobEntity) entityLiving).initialize(world, getWorld().getLocalDifficulty(pos), SpawnType.SPAWNER, null, null);
+                        ((MobEntity) entityLiving).initialize((ServerWorldAccess) getWorld(), getWorld().getLocalDifficulty(pos), SpawnReason.SPAWNER, null, null);
                     break;
                 }
             }
@@ -139,7 +140,7 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
         if (state.getBlock() != RegistrarSoulShards.SOUL_CAGE)
             return new TypedActionResult<>(ActionResult.FAIL, null);
 
-        ItemStack shardStack = inventory.getInvStack(0);
+        ItemStack shardStack = inventory.getStack(0);
         if (shardStack.isEmpty() || !(shardStack.getItem() instanceof ItemSoulShard))
             return new TypedActionResult<>(ActionResult.FAIL, null);
 
@@ -170,7 +171,7 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     }
 
     public Binding getBinding() {
-        ItemStack stack = inventory.getInvStack(0);
+        ItemStack stack = inventory.getStack(0);
         if (stack.isEmpty() || !(stack.getItem() instanceof ItemSoulShard))
             return null;
 
@@ -184,12 +185,12 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     private boolean hasReachedSpawnCap(LivingEntity living) {
         Box box = new Box(getPos().getX() - 16, getPos().getY() - 16, getPos().getZ() - 16, getPos().getX() + 16, getPos().getY() + 16, getPos().getZ() + 16);
 
-        int mobCount = getWorld().getEntities(living.getClass(), box, e -> e != null && e.getDataTracker().get(SoulShards.cageBornTag)).size();
+        int mobCount = getWorld().getEntitiesByClass(living.getClass(), box, e -> e != null && e.getDataTracker().get(SoulShards.cageBornTag)).size();
         return mobCount >= SoulShards.CONFIG.getBalance().getSpawnCap();
     }
 
     private boolean isColliding(LivingEntity entity) {
-        return getWorld().isAreaNotEmpty(entity.getBoundingBox()) && getWorld().getEntities(LivingEntity.class, entity.getBoundingBox(), e -> true).isEmpty();
+        return getWorld().isSpaceEmpty(entity.getBoundingBox()) && getWorld().getEntitiesByClass(LivingEntity.class, entity.getBoundingBox(), e -> true).isEmpty();
     }
 
     public void setState(boolean active) {

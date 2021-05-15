@@ -46,7 +46,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
             return ActionResult.PASS;
 
         if (!player.inventory.insertStack(stack)) {
-            BlockPos playerPos = new BlockPos();
+            BlockPos playerPos = player.getBlockPos();
             ItemEntity entity = new ItemEntity(world, playerPos.getX(), playerPos.getY(), playerPos.getZ(), stack);
             world.spawnEntity(entity);
         }
@@ -55,14 +55,14 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
 
 
     @Override
-    public void onBlockRemoved(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean boolean_1) {
+    public void onStateReplaced(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean boolean_1) {
         if (this.hasBlockEntity() && blockState.getBlock() != blockState2.getBlock()) {
             TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(blockPos);
             if (cage != null)
                 ItemScatterer.spawn(world, blockPos, cage.getInventory());
         }
 
-        super.onBlockRemoved(blockState, world, blockPos, blockState2, boolean_1);
+        super.onStateReplaced(blockState, world, blockPos, blockState2, boolean_1);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
     public boolean isTranslucent(BlockState state, BlockView view, BlockPos pos) {
         return true;
     }
-
+    /*
     @Override
     public boolean canSuffocate(BlockState state, BlockView view, BlockPos pos) {
         return false;
@@ -97,7 +97,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
     public boolean isSimpleFullBlock(BlockState state, BlockView view, BlockPos pos) {
         return false;
     }
-
+    */
     @Override
     public void onBlockAdded(BlockState state1, World world, BlockPos pos, BlockState state2, boolean someBool) {
         handleRedstoneChange(world, state1, pos);
@@ -118,12 +118,12 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
     protected void appendProperties(StateManager.Builder<Block, BlockState> factory) {
         factory.add(ACTIVE, POWERED);
     }
-
+    /*
     @Override
-    public boolean hasBlockEntity() {
+    public final boolean hasBlockEntity() {
         return true;
     }
-
+    */
     @Override
     public BlockEntity createBlockEntity(BlockView view) {
         return new TileEntitySoulCage();

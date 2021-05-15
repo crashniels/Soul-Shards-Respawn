@@ -13,6 +13,7 @@ import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -22,7 +23,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DefaultedList;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -34,7 +35,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
     public ItemSoulShard() {
         super(new Settings().maxCount(1).group(ItemGroup.MISC));
-
+        /*
         addPropertyGetter(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
         addPropertyGetter(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity) -> {
             Binding binding = getBinding(stack);
@@ -43,6 +44,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
             return Float.parseFloat("0." + Tier.INDEXED.indexOf(binding.getTier()));
         });
+        */
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
         if (state.getBlock() instanceof SpawnerBlock) {
             if (!SoulShards.CONFIG.getBalance().allowSpawnerAbsorption()) {
                 if (context.getPlayer() != null)
-                    context.getPlayer().addChatMessage(new TranslatableText("chat.soulshards.absorb_disabled"), true);
+                    context.getPlayer().sendMessage(new TranslatableText("chat.soulshards.absorb_disabled"), true);
                 return ActionResult.PASS;
             }
 
@@ -88,9 +90,9 @@ public class ItemSoulShard extends Item implements ISoulShard {
             if (cage == null)
                 return ActionResult.PASS;
 
-            ItemStack cageStack = cage.getInventory().getInvStack(0);
-            if (cageStack.isEmpty() && cage.getInventory().isValidInvStack(0, context.getStack())) {
-                cage.getInventory().setInvStack(0, context.getStack().copy());
+            ItemStack cageStack = cage.getInventory().getStack(0);
+            if (cageStack.isEmpty() && cage.getInventory().isValid(0, context.getStack())) {
+                cage.getInventory().setStack(0, context.getStack().copy());
                 context.getStack().decrement(1);
                 cage.markDirty();
                 cage.setState(true);
@@ -107,13 +109,13 @@ public class ItemSoulShard extends Item implements ISoulShard {
         if (binding == null)
             return;
 
-        Style greyColor = new Style().setColor(Formatting.GRAY);
+        Style greyColor = Style.EMPTY.withColor(Formatting.GRAY);
         if (binding.getBoundEntity() != null) {
             EntityType entityEntry = Registry.ENTITY_TYPE.get(binding.getBoundEntity());
             if (entityEntry != null)
                 tooltip.add(new TranslatableText("tooltip.soulshards.bound", entityEntry.getName()).setStyle(greyColor));
             else
-                tooltip.add(new TranslatableText("tooltip.soulshards.bound", binding.getBoundEntity().toString()).setStyle(new Style().setColor(Formatting.RED)));
+                tooltip.add(new TranslatableText("tooltip.soulshards.bound", binding.getBoundEntity().toString()).setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }
 
         tooltip.add(new TranslatableText("tooltip.soulshards.tier", binding.getTier().getIndex()).setStyle(greyColor));
@@ -143,7 +145,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
     }
 
     @Override
-    public boolean hasEnchantmentGlint(ItemStack stack) {
+    public boolean hasGlint(ItemStack stack) {
         Binding binding = getBinding(stack);
         return binding != null && binding.getKills() >= Tier.maxKills;
     }

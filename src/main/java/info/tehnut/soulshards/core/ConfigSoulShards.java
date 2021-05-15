@@ -3,7 +3,7 @@ package info.tehnut.soulshards.core;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -165,7 +165,7 @@ public class ConfigSoulShards {
         private static Map<String, Boolean> getDefaults() {
             Map<String, Boolean> defaults = Maps.newHashMap();
             Registry.ENTITY_TYPE.stream()
-                    .filter(e -> e.getCategory() != EntityCategory.MISC)
+                    .filter(e -> e.getSpawnGroup() != SpawnGroup.MISC)
                     .forEach(e -> {
                         String entityId = Registry.ENTITY_TYPE.getId(e).toString();
                         defaults.put(entityId, !DEFAULT_DISABLES.contains(entityId));

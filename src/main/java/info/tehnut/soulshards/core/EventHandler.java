@@ -102,7 +102,7 @@ public class EventHandler {
         // If offhand isn't a shard, loop through the hotbar
         if (shardItem.isEmpty() || !(shardItem.getItem() instanceof ItemSoulShard)) {
             for (int i = 0; i < 9; i++) {
-                shardItem = player.inventory.getInvStack(i);
+                shardItem = player.inventory.getStack(i);
                 if (!shardItem.isEmpty() && shardItem.getItem() instanceof ItemSoulShard) {
                     if (checkBinding(entityId, shardItem)) return shardItem;
                 }
