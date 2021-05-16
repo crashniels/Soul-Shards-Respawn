@@ -11,6 +11,7 @@
   "block.soulshards.soul_cage": "Soul Cage",
 
   "tooltip.soulshards.bound": "Bound to: %s",
+  "tooltip.soulshards.unbound": "Currently unbound",
   "tooltip.soulshards.kills": "Souls: %d",
   "tooltip.soulshards.tier": "Tier: %d",
   "tooltip.soulshards.owner": "Owner: %s",

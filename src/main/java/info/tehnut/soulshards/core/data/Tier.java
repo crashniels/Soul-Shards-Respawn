@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.core.util.JsonUtil;
-import net.fabricmc.loader.FabricLoader;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
 import java.util.List;
@@ -91,7 +91,7 @@ public class Tier implements IShardTier {
     }
 
     public static void readTiers() {
-        Tier[] tiers = JsonUtil.fromJson(TypeToken.get(Tier[].class), new File(FabricLoader.INSTANCE.getConfigDirectory(), SoulShards.MODID + "/tiers.json"), generateDefaults());
+        Tier[] tiers = JsonUtil.fromJson(TypeToken.get(Tier[].class), new File(FabricLoader.getInstance().getConfigDirectory(), SoulShards.MODID + "/tiers.json"), generateDefaults());
         for (Tier tier : tiers) {
             TIERS.put(tier.killRequirement, tier);
             INDEXED.add(tier);

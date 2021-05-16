@@ -23,8 +23,11 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.GameRules.Key;
+import net.minecraft.world.dimension.DimensionType;
 
 public class TileEntitySoulCage extends BlockEntity implements Tickable {
 
@@ -133,8 +136,8 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
 
     private TypedActionResult<Binding> canSpawn() {
         // TODO mojang pls
-//        if (!getWorld().getServer().getWorld(DimensionType.OVERWORLD).getGameRules().getBoolean(SoulShards.allowCageSpawns))
-//            return new TypedActionResult<>(ActionResult.FAIL, null);
+        //if (!getWorld().getServer().getWorld(DimensionType.OVERWORLD_ID).getGameRules().getBoolean(SoulShards.allowCageSpawns))
+        //    return new TypedActionResult<>(ActionResult.FAIL, null);
 
         BlockState state = getWorld().getBlockState(pos);
         if (state.getBlock() != RegistrarSoulShards.SOUL_CAGE)

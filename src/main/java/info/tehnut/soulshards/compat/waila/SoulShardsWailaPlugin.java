@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
@@ -35,9 +36,11 @@ public class SoulShardsWailaPlugin implements IWailaPlugin {
         registrar.registerComponentProvider(new IComponentProvider() {
             @Override
             public void appendBody(List<Text> tooltip, IDataAccessor accessor, IPluginConfig config) {
-                if (!accessor.getServerData().contains("binding"))
+                if (!accessor.getServerData().contains("binding")){
+                    tooltip.add(new TranslatableText("tooltip.soulshards.unbound"));
                     return;
-
+                }
+                    
                 Binding binding = new Binding(accessor.getServerData().getCompound("binding"));
 
                 if (binding.getBoundEntity() != null) {
@@ -45,8 +48,9 @@ public class SoulShardsWailaPlugin implements IWailaPlugin {
                     if (entityEntry != null)
                         tooltip.add(new TranslatableText("tooltip.soulshards.bound", entityEntry.getName()));
                     else
-                        tooltip.add(new TranslatableText("tooltip.soulshards.bound", binding.getBoundEntity().toString()).setStyle(new Style().setColor(Formatting.RED)));
+                        tooltip.add(new TranslatableText("tooltip.soulshards.bound", binding.getBoundEntity().toString()).setStyle(Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.RED))));
                 }
+                //else {tooltip.add(new TranslatableText("tooltip.soulshards.unbound"));}
 
                 tooltip.add(new TranslatableText("tooltip.soulshards.tier", binding.getTier().getIndex()));
             }
