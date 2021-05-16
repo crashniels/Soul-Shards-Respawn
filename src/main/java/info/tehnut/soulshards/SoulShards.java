@@ -7,8 +7,13 @@ import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Tier;
 import info.tehnut.soulshards.core.util.JsonUtil;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.Rule;
@@ -31,4 +36,8 @@ public class SoulShards implements ModInitializer {
         RegistrarSoulShards.registerEnchantments(Registry.ENCHANTMENT);
         EventHandler.init();
     }
+
+    public static final ItemGroup RE_SoulShards = FabricItemGroupBuilder.build(
+		new Identifier(SoulShards.MODID, "soulshards"),
+		() -> new ItemStack(RegistrarSoulShards.VILE_SWORD));
 }

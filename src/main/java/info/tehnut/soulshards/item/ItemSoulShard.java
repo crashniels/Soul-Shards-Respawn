@@ -34,7 +34,7 @@ import java.util.List;
 public class ItemSoulShard extends Item implements ISoulShard {
 
     public ItemSoulShard() {
-        super(new Settings().maxCount(1).group(ItemGroup.MISC));
+        super(new Settings().maxCount(1).group(SoulShards.RE_SoulShards));
         /*
         addPropertyGetter(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
         addPropertyGetter(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity) -> {
