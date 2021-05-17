@@ -27,23 +27,22 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-
+import net.fabricmc.fabric.mixin.object.builder.ModelPredicateProviderRegistryAccessor;
 import java.util.List;
 
 public class ItemSoulShard extends Item implements ISoulShard {
 
     public ItemSoulShard() {
         super(new Settings().maxCount(1).group(SoulShards.RE_SoulShards));
-        /*
-        addPropertyGetter(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
-        addPropertyGetter(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity) -> {
+        
+        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
+        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity) -> {
             Binding binding = getBinding(stack);
             if (binding == null)
                 return 0F;
 
             return Float.parseFloat("0." + Tier.INDEXED.indexOf(binding.getTier()));
         });
-        */
     }
 
     @Override
