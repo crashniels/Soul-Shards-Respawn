@@ -1,11 +1,11 @@
 plugins {
     //id "com.matthewprenger.cursegradle" version "1.4.0"
-    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id "maven-publish"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 def build_number = System.getenv('BUILD_NUMBER') != null ? System.getenv('BUILD_NUMBER') : 'CUSTOM'
 
@@ -18,7 +18,7 @@ minecraft {
 }
 
 repositories {
-    maven { url "https://maven.tehnut.info" }
+    maven { url "https://bai.jfrog.io/artifactory/maven" }
 }
 
 dependencies {
@@ -29,8 +29,8 @@ dependencies {
     //Fabric api
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
-    //Hwyla
-    modCompile "mcp.mobius.waila:Hwyla:${waila_version}"
+    // compile against the API
+    modRuntime "mcp.mobius.waila:wthit:fabric-${wthitVersion}"
 }
 
 task sourcesJar(type: Jar) {

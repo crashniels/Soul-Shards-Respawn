@@ -8,34 +8,32 @@ import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.LightType;
 import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.GameRules.Key;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 
-public class TileEntitySoulCage extends BlockEntity implements Tickable {
+public class TileEntitySoulCage extends BlockEntity implements BlockEntityTicker {
 
     private Inventory inventory;
     private boolean active;
 
-    public TileEntitySoulCage() {
-        super(RegistrarSoulShards.SOUL_CAGE_TE);
+    public TileEntitySoulCage(BlockPos blockPos, BlockState blockState) {
+        super(RegistrarSoulShards.SOUL_CAGE_TE, blockPos, blockState);
 
         this.inventory = new SimpleInventory(1){
             @Override
@@ -50,7 +48,7 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     }
 
     @Override
-    public void tick() {
+    public void tick(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
         if (getWorld() == null || getWorld().isClient)
             return;
 
@@ -73,22 +71,22 @@ public class TileEntitySoulCage extends BlockEntity implements Tickable {
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
 
         if (tag.contains("shard"))
-            inventory.setStack(0, ItemStack.fromTag(tag.getCompound("shard")));
+            inventory.setStack(0, ItemStack.fromNbt(tag.getCompound("shard")));
         this.active = tag.getBoolean("active");
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         ItemStack shardStack = inventory.getStack(0);
         if (!shardStack.isEmpty())
-            tag.put("shard", shardStack.toTag(new CompoundTag()));
+            tag.put("shard", shardStack.writeNbt(new NbtCompound()));
         tag.putBoolean("active", active);
 
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     private void spawnEntities() {

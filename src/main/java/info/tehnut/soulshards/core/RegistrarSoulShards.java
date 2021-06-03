@@ -6,6 +6,7 @@ import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.util.EnchantmentSoulStealer;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import info.tehnut.soulshards.item.ItemVileSword;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.Enchantment;
@@ -18,7 +19,7 @@ public class RegistrarSoulShards {
 
     public static final Block SOUL_CAGE = new BlockSoulCage();
 
-    public static final BlockEntityType<TileEntitySoulCage> SOUL_CAGE_TE = BlockEntityType.Builder.create(TileEntitySoulCage::new, SOUL_CAGE).build(null);
+    public static final BlockEntityType<TileEntitySoulCage> SOUL_CAGE_TE = FabricBlockEntityTypeBuilder.create(TileEntitySoulCage::new, SOUL_CAGE).build(null);
 
     public static final Item SOUL_SHARD = new ItemSoulShard();
     public static final Item VILE_SWORD = new ItemVileSword();

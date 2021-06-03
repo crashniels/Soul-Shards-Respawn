@@ -45,7 +45,7 @@ public class EventHandler {
             match.getValue().forEach(matchedPos -> world.breakBlock(matchedPos, false));
             held.decrement(1);
             ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD);
-            if (!player.inventory.insertStack(shardStack))
+            if (!player.getInventory().insertStack(shardStack))
                 ItemScatterer.spawn(world, player.getX(), player.getY(), player.getZ(), shardStack);
             return ActionResult.SUCCESS;
         });
@@ -102,7 +102,7 @@ public class EventHandler {
         // If offhand isn't a shard, loop through the hotbar
         if (shardItem.isEmpty() || !(shardItem.getItem() instanceof ItemSoulShard)) {
             for (int i = 0; i < 9; i++) {
-                shardItem = player.inventory.getStack(i);
+                shardItem = player.getInventory().getStack(i);
                 if (!shardItem.isEmpty() && shardItem.getItem() instanceof ItemSoulShard) {
                     if (checkBinding(entityId, shardItem)) return shardItem;
                 }

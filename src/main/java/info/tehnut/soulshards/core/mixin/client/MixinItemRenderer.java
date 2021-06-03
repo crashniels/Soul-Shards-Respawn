@@ -9,6 +9,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,16 +41,17 @@ public abstract class MixinItemRenderer {
 
         RenderSystem.disableDepthTest();
         RenderSystem.disableTexture();
-        RenderSystem.disableAlphaTest();
+        RenderSystem.disableDepthTest();
         RenderSystem.disableBlend();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(7, VertexFormats.POSITION_COLOR);
+        //buffer.begin(7, VertexFormats.POSITION_COLOR);
+        buffer.begin(DrawMode.LINES, VertexFormats.POSITION_COLOR);
         prepareQuad(buffer, x + 2, y + 13, 13, 2, 0, 0, 0);
         prepareQuad(buffer, x + 2, y + 13, (int) (percentage * 13), 1, color >> 16 & 255, color >> 8 & 255, color & 255);
         Tessellator.getInstance().draw();
         RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
+        RenderSystem.enableDepthTest();
         RenderSystem.enableTexture();
         RenderSystem.enableDepthTest();
     }

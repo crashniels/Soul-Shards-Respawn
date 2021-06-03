@@ -45,7 +45,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
         if (stack.isEmpty())
             return ActionResult.PASS;
 
-        if (!player.inventory.insertStack(stack)) {
+        if (!player.getInventory().insertStack(stack)) {
             BlockPos playerPos = player.getBlockPos();
             ItemEntity entity = new ItemEntity(world, playerPos.getX(), playerPos.getY(), playerPos.getZ(), stack);
             world.spawnEntity(entity);
@@ -56,7 +56,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
 
     @Override
     public void onStateReplaced(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean boolean_1) {
-        if (this.hasBlockEntity() && blockState.getBlock() != blockState2.getBlock()) {
+        if (blockState.hasBlockEntity() && blockState.getBlock() != blockState2.getBlock()) {
             TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(blockPos);
             if (cage != null)
                 ItemScatterer.spawn(world, blockPos, cage.getInventory());
@@ -87,17 +87,7 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
     public boolean isTranslucent(BlockState state, BlockView view, BlockPos pos) {
         return true;
     }
-    /*
-    @Override
-    public boolean canSuffocate(BlockState state, BlockView view, BlockPos pos) {
-        return false;
-    }
 
-    @Override
-    public boolean isSimpleFullBlock(BlockState state, BlockView view, BlockPos pos) {
-        return false;
-    }
-    */
     @Override
     public void onBlockAdded(BlockState state1, World world, BlockPos pos, BlockState state2, boolean someBool) {
         handleRedstoneChange(world, state1, pos);
@@ -118,15 +108,10 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
     protected void appendProperties(StateManager.Builder<Block, BlockState> factory) {
         factory.add(ACTIVE, POWERED);
     }
-    /*
+
     @Override
-    public final boolean hasBlockEntity() {
-        return true;
-    }
-    */
-    @Override
-    public BlockEntity createBlockEntity(BlockView view) {
-        return new TileEntitySoulCage();
+    public BlockEntity createBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return new TileEntitySoulCage(blockPos, blockState);
     }
 
     private void handleRedstoneChange(World world, BlockState state, BlockPos pos) {

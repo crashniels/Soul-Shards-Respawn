@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Map;
@@ -164,12 +165,14 @@ public class ConfigSoulShards {
 
         private static Map<String, Boolean> getDefaults() {
             Map<String, Boolean> defaults = Maps.newHashMap();
-            Registry.ENTITY_TYPE.stream()
+            /*
+            DefaultedRegistry.ENTITY_TYPE.stream()
                     .filter(e -> e.getSpawnGroup() != SpawnGroup.MISC)
                     .forEach(e -> {
                         String entityId = Registry.ENTITY_TYPE.getId(e).toString();
                         defaults.put(entityId, !DEFAULT_DISABLES.contains(entityId));
                     });
+            */
             return defaults;
         }
     }

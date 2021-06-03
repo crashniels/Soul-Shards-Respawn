@@ -1,5 +1,7 @@
 package info.tehnut.soulshards.item;
 
+import java.util.List;
+
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.api.ISoulShard;
@@ -8,6 +10,7 @@ import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.Tier;
 import info.tehnut.soulshards.core.mixin.MobSpawnerLogicEntityId;
+import net.fabricmc.fabric.mixin.object.builder.ModelPredicateProviderRegistryAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
@@ -17,26 +20,24 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.fabricmc.fabric.mixin.object.builder.ModelPredicateProviderRegistryAccessor;
-import java.util.List;
 
 public class ItemSoulShard extends Item implements ISoulShard {
 
     public ItemSoulShard() {
         super(new Settings().maxCount(1).group(SoulShards.RE_SoulShards));
         
-        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
-        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity) -> {
+        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "bound"), (stack, worldIn, entityIn, _value) -> getBinding(stack) != null ? 1.0F : 0.0F);
+        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MODID, "tier"), (stack, world, entity, _value) -> {
             Binding binding = getBinding(stack);
             if (binding == null)
                 return 0F;
@@ -67,7 +68,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 return ActionResult.PASS;
 
             try {
-                Identifier entityId = ((MobSpawnerLogicEntityId) spawner.getLogic()).getEntityIdentifier();
+                Identifier entityId = ((MobSpawnerLogicEntityId) spawner.getLogic()).getEntityIdentifier(context.getWorld(), context.getBlockPos());
                 if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
                     return ActionResult.PASS;
 
@@ -154,9 +155,9 @@ public class ItemSoulShard extends Item implements ISoulShard {
     }
 
     public void updateBinding(ItemStack stack, Binding binding) {
-        CompoundTag tag = stack.getTag();
+        NbtCompound tag = stack.getTag();
         if (tag == null)
-            stack.setTag(tag = new CompoundTag());
+            stack.setTag(tag = new NbtCompound());
 
         tag.put("binding", binding.serializeNBT());
     }
