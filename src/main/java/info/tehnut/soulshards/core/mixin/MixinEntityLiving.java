@@ -16,8 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 
 @Mixin(LivingEntity.class)
 public class MixinEntityLiving {
-    // FIX PLS THX
-    
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void registerDataTracker(CallbackInfo callbackInfo) {
         TrackedData<Boolean> _cageBornTag = CageBornTagHandler.getTrackedDataCageBorn();

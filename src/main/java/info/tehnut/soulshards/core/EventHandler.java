@@ -8,7 +8,6 @@ import info.tehnut.soulshards.api.ISoulWeapon;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
 import info.tehnut.soulshards.core.data.Tier;
-import info.tehnut.soulshards.core.mixin.MixinEntityLiving;
 import info.tehnut.soulshards.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;

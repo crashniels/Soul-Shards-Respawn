@@ -1,11 +1,18 @@
 package info.tehnut.soulshards.compat.waila;
 
-import info.tehnut.soulshards.SoulShards;
+import java.util.List;
+
 import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
-import info.tehnut.soulshards.core.mixin.MixinEntityLiving;
 import info.tehnut.soulshards.core.util.CageBornTagHandler;
-import mcp.mobius.waila.api.*;
+import mcp.mobius.waila.api.IComponentProvider;
+import mcp.mobius.waila.api.IDataAccessor;
+import mcp.mobius.waila.api.IEntityAccessor;
+import mcp.mobius.waila.api.IEntityComponentProvider;
+import mcp.mobius.waila.api.IPluginConfig;
+import mcp.mobius.waila.api.IRegistrar;
+import mcp.mobius.waila.api.IWailaPlugin;
+import mcp.mobius.waila.api.TooltipPosition;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Style;
@@ -14,8 +21,6 @@ import net.minecraft.text.TextColor;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
-
-import java.util.List;
 
 public class SoulShardsWailaPlugin implements IWailaPlugin {
 

@@ -1,6 +1,9 @@
 package info.tehnut.soulshards;
 
+import java.io.File;
+
 import com.google.gson.reflect.TypeToken;
+
 import info.tehnut.soulshards.core.ConfigSoulShards;
 import info.tehnut.soulshards.core.EventHandler;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
@@ -9,15 +12,12 @@ import info.tehnut.soulshards.core.util.JsonUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.data.TrackedData;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.Rule;
-
-import java.io.File;
 
 public class SoulShards implements ModInitializer {
 
