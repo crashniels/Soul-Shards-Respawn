@@ -1,9 +1,12 @@
 package info.tehnut.soulshards.block;
 
+import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.Tier;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,6 +17,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
@@ -21,7 +25,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockSoulCage extends Block implements BlockEntityProvider {
+public class BlockSoulCage extends BlockWithEntity {
 
     public static final Property<Boolean> ACTIVE = BooleanProperty.of("active");
     public static final Property<Boolean> POWERED = BooleanProperty.of("powered");
@@ -120,5 +124,10 @@ public class BlockSoulCage extends Block implements BlockEntityProvider {
             world.setBlockState(pos, state.with(POWERED, false), 2);
         else if (!state.get(POWERED) && powered)
             world.setBlockState(pos, state.with(POWERED, true), 2);
+    }
+
+    @Override
+    public BlockEntityTicker getTicker(World world, BlockState blockState, BlockEntityType type) {
+        return world.isClient ? null : checkType(type, RegistrarSoulShards.SOUL_CAGE_TE, TileEntitySoulCage::tick);
     }
 }

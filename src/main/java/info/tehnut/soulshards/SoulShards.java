@@ -23,7 +23,7 @@ public class SoulShards implements ModInitializer {
 
     public static final String MODID = "soulshards";
     public static final ConfigSoulShards CONFIG = JsonUtil.fromJson(TypeToken.get(ConfigSoulShards.class), new File(FabricLoader.getInstance().getConfigDirectory(), MODID + "/" + MODID + ".json"), new ConfigSoulShards());
-    public static TrackedData<Boolean> cageBornTag;
+    //public static TrackedData<Boolean> cageBornTag;
     public static Rule<GameRules.BooleanRule> allowCageSpawns;
 
     @Override

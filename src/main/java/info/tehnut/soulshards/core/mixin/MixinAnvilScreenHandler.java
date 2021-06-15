@@ -1,19 +1,19 @@
 package info.tehnut.soulshards.core.mixin;
 
-import info.tehnut.soulshards.SoulShards;
-import info.tehnut.soulshards.core.RegistrarSoulShards;
-import info.tehnut.soulshards.core.data.Binding;
-import info.tehnut.soulshards.item.ItemSoulShard;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import info.tehnut.soulshards.SoulShards;
+import info.tehnut.soulshards.core.RegistrarSoulShards;
+import info.tehnut.soulshards.core.data.Binding;
+import info.tehnut.soulshards.item.ItemSoulShard;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.AnvilScreenHandler;
+import net.minecraft.screen.Property;
 
 @Mixin(AnvilScreenHandler.class)
 public class MixinAnvilScreenHandler extends MixinForgingScreenHandler{

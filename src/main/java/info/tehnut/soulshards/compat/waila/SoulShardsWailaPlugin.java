@@ -1,10 +1,10 @@
 package info.tehnut.soulshards.compat.waila;
 
-public class SoulShardsWailaPlugin {}
-/*
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
+import info.tehnut.soulshards.core.mixin.MixinEntityLiving;
+import info.tehnut.soulshards.core.util.CageBornTagHandler;
 import mcp.mobius.waila.api.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +24,8 @@ public class SoulShardsWailaPlugin implements IWailaPlugin {
         registrar.registerComponentProvider(new IEntityComponentProvider() {
             @Override
             public void appendBody(List<Text> tooltip, IEntityAccessor accessor, IPluginConfig config) {
-                if (accessor.getEntity().getDataTracker().get(SoulShards.cageBornTag))
+                //if (accessor.getEntity().getDataTracker().get(MixinEntityLiving.cageBornTag))
+                if(CageBornTagHandler.getCageBornTag((LivingEntity) accessor.getEntity()))
                     tooltip.add(new TranslatableText("tooltip.soulshards.cage_born"));
             }
         }, TooltipPosition.BODY, LivingEntity.class);
@@ -59,4 +60,3 @@ public class SoulShardsWailaPlugin implements IWailaPlugin {
         }, TooltipPosition.BODY, TileEntitySoulCage.class);
     }
 }
-*/

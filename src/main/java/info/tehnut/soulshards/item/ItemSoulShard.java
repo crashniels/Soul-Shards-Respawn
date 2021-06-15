@@ -94,7 +94,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 cage.getInventory().setStack(0, context.getStack().copy());
                 context.getStack().decrement(1);
                 cage.markDirty();
-                cage.setState(true);
+                TileEntitySoulCage.setState(true, context.getWorld(), context.getBlockPos(), state);
                 return ActionResult.SUCCESS;
             }
         }

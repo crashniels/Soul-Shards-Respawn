@@ -1,11 +1,15 @@
 package info.tehnut.soulshards.core;
 
+import java.util.Set;
+
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.BindingEvent;
 import info.tehnut.soulshards.api.ISoulWeapon;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
 import info.tehnut.soulshards.core.data.Tier;
+import info.tehnut.soulshards.core.mixin.MixinEntityLiving;
+import info.tehnut.soulshards.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
@@ -15,14 +19,12 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.Hand;
 import net.minecraft.util.registry.Registry;
-
-import java.util.Set;
 
 public class EventHandler {
 
@@ -57,7 +59,9 @@ public class EventHandler {
         if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !killed.canUsePortals())
             return;
 
-        if (!SoulShards.CONFIG.getBalance().countCageBornForShard() && killed.getDataTracker().get(SoulShards.cageBornTag))
+        if (!SoulShards.CONFIG.getBalance().countCageBornForShard() && 
+        //killed.getDataTracker().get(MixinEntityLiving.cageBornTag))
+        CageBornTagHandler.getCageBornTag(killed))
             return;
 
         if (source.getAttacker() instanceof PlayerEntity) {

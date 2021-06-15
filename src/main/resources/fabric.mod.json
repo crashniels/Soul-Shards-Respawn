@@ -36,6 +36,6 @@
     "waila:plugins": {
       "id": "soulshards",
       "initializer": "info.tehnut.soulshards.compat.waila.SoulShardsWailaPlugin"
-    }
+      }
   }
 }
