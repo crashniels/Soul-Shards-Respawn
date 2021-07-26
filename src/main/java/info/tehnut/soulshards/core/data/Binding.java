@@ -93,7 +93,7 @@ public class Binding implements IBinding, INBTSerializable<NbtElement> {
     }
 
     public static Binding fromNBT(ItemStack stack) {
-        NbtCompound tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag == null || !tag.contains("binding"))
             return null;
 

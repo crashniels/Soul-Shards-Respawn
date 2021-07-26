@@ -1,6 +1,6 @@
 plugins {
     //id "com.matthewprenger.cursegradle" version "1.4.0"
-    id 'fabric-loom' version '0.9-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id "maven-publish"
 }
 
@@ -30,6 +30,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     // compile against the API
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${wthitVersion}"
+
+    // run against the full jar
     modRuntime "mcp.mobius.waila:wthit:fabric-${wthitVersion}"
 }
 

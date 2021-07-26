@@ -155,9 +155,9 @@ public class ItemSoulShard extends Item implements ISoulShard {
     }
 
     public void updateBinding(ItemStack stack, Binding binding) {
-        NbtCompound tag = stack.getTag();
+        NbtCompound tag = stack.getNbt();
         if (tag == null)
-            stack.setTag(tag = new NbtCompound());
+            stack.setNbt(tag = new NbtCompound());
 
         tag.put("binding", binding.serializeNBT());
     }
