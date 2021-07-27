@@ -1,23 +1,23 @@
 package info.tehnut.soulshardsrespawn.core.util;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 public class EnchantmentSoulStealer extends Enchantment {
 
     public EnchantmentSoulStealer() {
-        super(Rarity.UNCOMMON, EnchantmentType.WEAPON, new EquipmentSlotType[] { EquipmentSlotType.MAINHAND });
+        super(Rarity.UNCOMMON, EnchantmentCategory.WEAPON, new EquipmentSlot[] { EquipmentSlot.MAINHAND });
     }
 
     @Override
-    public int getMinEnchantability(int level) {
+    public int getMinCost(int level) {
         return (level - 1) * 11;
     }
 
     @Override
-    public int getMaxEnchantability(int level) {
-        return this.getMinEnchantability(level) + 20;
+    public int getMaxCost(int level) {
+        return this.getMinCost(level) + 20;
     }
 
     @Override

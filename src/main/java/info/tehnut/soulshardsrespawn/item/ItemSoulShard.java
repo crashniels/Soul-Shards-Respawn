@@ -7,22 +7,23 @@ import info.tehnut.soulshardsrespawn.block.TileEntitySoulCage;
 import info.tehnut.soulshardsrespawn.core.RegistrarSoulShards;
 import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SpawnerBlock;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.spawner.AbstractSpawner;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SpawnerBlock;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -36,84 +37,75 @@ public class ItemSoulShard extends Item implements ISoulShard {
     private static final Method GET_ENTITY_ID_METHOD;
 
     static {
-        GET_ENTITY_ID_METHOD = ObfuscationReflectionHelper.findMethod(AbstractSpawner.class, "func_190895_g");
+        GET_ENTITY_ID_METHOD = ObfuscationReflectionHelper.findMethod(SpawnerBlock.class, "func_190895_g");
     }
 
     public ItemSoulShard() {
-        super(new Properties().group(SoulShards.TAB_SS));
-
-        addPropertyOverride(new ResourceLocation(SoulShards.MODID, "bound"), (stack, worldIn, entityIn) -> getBinding(stack) != null ? 1.0F : 0.0F);
-        addPropertyOverride(new ResourceLocation(SoulShards.MODID, "tier"), (stack, world, entity) -> {
-            Binding binding = getBinding(stack);
-            if (binding == null)
-                return 0F;
-
-            return Float.parseFloat("0." + Tier.INDEXED.indexOf(binding.getTier()));
-        });
+        super(new Properties().tab(SoulShards.TAB_SS));
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         if (context.getPlayer() == null)
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
 
-        BlockState state = context.getWorld().getBlockState(context.getPos());
-        ItemStack stack = context.getPlayer().getHeldItem(context.getHand());
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+        ItemStack stack = context.getPlayer().getItemInHand(context.getHand());
         Binding binding = getBinding(stack);
         if (binding == null)
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
 
         if (state.getBlock() instanceof SpawnerBlock) {
             if (!SoulShards.CONFIG.getBalance().allowSpawnerAbsorption()) {
-                context.getPlayer().sendStatusMessage(new TranslationTextComponent("chat.soulshards.absorb_disabled"), true);
-                return ActionResultType.PASS;
+                context.getPlayer().displayClientMessage(new TranslatableComponent("chat.soulshards.absorb_disabled"), true);
+                return InteractionResult.PASS;
             }
 
             if (binding.getKills() >= Tier.maxKills)
-                return ActionResultType.PASS;
+                return InteractionResult.PASS;
 
-            MobSpawnerTileEntity mobSpawner = (MobSpawnerTileEntity) context.getWorld().getTileEntity(context.getPos());
+            SpawnerBlockEntity mobSpawner = (SpawnerBlockEntity) context.getLevel().getBlockEntity(context.getClickedPos());
             if (mobSpawner == null)
-                return ActionResultType.PASS;
+                return InteractionResult.PASS;
 
             try {
-                ResourceLocation entityId = (ResourceLocation) GET_ENTITY_ID_METHOD.invoke(mobSpawner.getSpawnerBaseLogic());
+                ResourceLocation entityId = (ResourceLocation) GET_ENTITY_ID_METHOD.invoke(mobSpawner.getSpawner());
                 if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
 
                 if (entityId == null || binding.getBoundEntity() == null || !binding.getBoundEntity().equals(entityId))
-                    return ActionResultType.FAIL;
+                    return InteractionResult.FAIL;
 
                 updateBinding(stack, binding.addKills(SoulShards.CONFIG.getBalance().getAbsorptionBonus()));
-                context.getWorld().destroyBlock(context.getPos(), false);
-                return ActionResultType.SUCCESS;
+                context.getLevel().destroyBlock(context.getClickedPos(), false);
+                return InteractionResult.SUCCESS;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (state.getBlock() == RegistrarSoulShards.SOUL_CAGE) {
             if (binding.getBoundEntity() == null)
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
 
-            TileEntitySoulCage cage = (TileEntitySoulCage) context.getWorld().getTileEntity(context.getPos());
+            TileEntitySoulCage cage = (TileEntitySoulCage) context.getLevel().getBlockEntity(context.getClickedPos());
             if (cage == null)
-                return ActionResultType.PASS;
+                return InteractionResult.PASS;
 
             IItemHandler itemHandler = cage.getInventory();
             if (itemHandler != null && itemHandler.getStackInSlot(0).isEmpty()) {
                 ItemHandlerHelper.insertItem(itemHandler, stack.copy(), false);
-                cage.markDirty();
+                cage.setChanged();
                 cage.setState(true);
-                context.getPlayer().setHeldItem(context.getHand(), ItemStack.EMPTY);
-                return ActionResultType.SUCCESS;
+                context.getPlayer().setItemInHand(context.getHand(), ItemStack.EMPTY);
+                return InteractionResult.SUCCESS;
             }
         }
 
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (!isInGroup(group))
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
+        if (!allowdedIn(group))
             return;
 
         items.add(new ItemStack(this));
@@ -126,7 +118,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         Binding binding = getBinding(stack);
         if (binding == null)
             return;
@@ -134,23 +126,23 @@ public class ItemSoulShard extends Item implements ISoulShard {
         if (binding.getBoundEntity() != null) {
             EntityType<?> entityEntry = ForgeRegistries.ENTITIES.getValue(binding.getBoundEntity());
             if (entityEntry != null)
-                tooltip.add(new TranslationTextComponent("tooltip.soulshards.bound", entityEntry.getName()));
+                tooltip.add(new TranslatableComponent("tooltip.soulshards.bound", entityEntry.getRegistryName()));
         }
 
-        tooltip.add(new TranslationTextComponent("tooltip.soulshards.tier", binding.getTier().getIndex()));
-        tooltip.add(new TranslationTextComponent("tooltip.soulshards.kills", binding.getKills()));
+        tooltip.add(new TranslatableComponent("tooltip.soulshards.tier", binding.getTier().getIndex()));
+        tooltip.add(new TranslatableComponent("tooltip.soulshards.kills", binding.getKills()));
         if (flag.isAdvanced() && binding.getOwner() != null)
-            tooltip.add(new TranslationTextComponent("tooltip.soulshards.owner", binding.getOwner().toString()));
+            tooltip.add(new TranslatableComponent("tooltip.soulshards.owner", binding.getOwner().toString()));
     }
 
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getDescriptionId(ItemStack stack) {
         Binding binding = getBinding(stack);
-        return super.getTranslationKey(stack) + (binding == null || binding.getBoundEntity() == null ? "_unbound" : "");
+        return super.getName(stack) + (binding == null || binding.getBoundEntity() == null ? "_unbound" : "");
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         Binding binding = getBinding(stack);
         return binding != null && binding.getKills() >= Tier.maxKills;
     }
@@ -186,9 +178,17 @@ public class ItemSoulShard extends Item implements ISoulShard {
         return Binding.fromNBT(stack);
     }
 
+    public float getBindingFloatValue(ItemStack stack) {
+        Binding binding = getBinding(stack);
+        if(binding == null) {
+            return 0F;
+        }
+        return Float.parseFloat("0." + Tier.INDEXED.indexOf(binding.getTier()));
+    }
+
     public void updateBinding(ItemStack stack, Binding binding) {
         if (!stack.hasTag())
-            stack.setTag(new CompoundNBT());
+            stack.setTag(new CompoundTag());
 
         stack.getTag().put("binding", binding.serializeNBT());
     }

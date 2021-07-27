@@ -7,12 +7,13 @@ import info.tehnut.soulshardsrespawn.core.data.Tier;
 import info.tehnut.soulshardsrespawn.core.util.EnchantmentSoulStealer;
 import info.tehnut.soulshardsrespawn.item.ItemSoulShard;
 import info.tehnut.soulshardsrespawn.item.ItemVileSword;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +26,7 @@ public class RegistrarSoulShards {
     public static final Block SOUL_CAGE = Blocks.AIR;
 
     @ObjectHolder("soul_cage")
-    public static final TileEntityType<?> SOUL_CAGE_TE = TileEntityType.BED;
+    public static final BlockEntityType<?> SOUL_CAGE_TE = BlockEntityType.BED;
 
     public static final Item SOUL_SHARD = Items.AIR;
     public static final Item VILE_SWORD = Items.AIR;
@@ -33,7 +34,7 @@ public class RegistrarSoulShards {
     public static final Item CORRUPTED_INGOT = Items.AIR;
     public static final Item VILE_DUST = Items.AIR;
 
-    public static final Enchantment SOUL_STEALER = Enchantments.INFINITY;
+    public static final Enchantment SOUL_STEALER = Enchantments.INFINITY_ARROWS;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -43,9 +44,9 @@ public class RegistrarSoulShards {
     }
 
     @SubscribeEvent
-    public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
+    public static void registerTileEntities(RegistryEvent.Register<BlockEntityType<?>> event) {
         event.getRegistry().register(
-                TileEntityType.Builder.create(TileEntitySoulCage::new, SOUL_CAGE).build(null).setRegistryName(SoulShards.MODID, "soul_cage")
+                BlockEntityType.Builder.of(TileEntitySoulCage::new, SOUL_CAGE).build(null).setRegistryName(SoulShards.MODID, "soul_cage")
         );
     }
 

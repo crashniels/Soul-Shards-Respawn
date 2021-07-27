@@ -7,15 +7,10 @@ import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.MultiblockPattern;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
 import info.tehnut.soulshardsrespawn.item.ItemSoulShard;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -35,23 +30,23 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onEntityKill(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof PlayerEntity)
+        if (event.getEntityLiving() instanceof Player)
             return;
 
-        if (!SoulShards.CONFIG.getBalance().allowFakePlayers() && event.getSource().getTrueSource() instanceof FakePlayer)
+        if (!SoulShards.CONFIG.getBalance().allowFakePlayers() && event.getSource().getDirectEntity() instanceof FakePlayer)
             return;
 
         if (!SoulShards.CONFIG.getEntityList().isEnabled(event.getEntityLiving().getType().getRegistryName()))
             return;
 
-        if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !event.getEntityLiving().isNonBoss())
+        if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !event.getEntityLiving().canChangeDimensions())
             return;
 
         if (!SoulShards.CONFIG.getBalance().countCageBornForShard() && event.getEntityLiving().getPersistentData().getBoolean("cageBorn"))
             return;
 
-        if (event.getSource().getTrueSource() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
+        if (event.getSource().getDirectEntity() instanceof Player) {
+            Player player = (Player) event.getSource().getDirectEntity();
 
             BindingEvent.GetEntityName getEntityName = new BindingEvent.GetEntityName(event.getEntityLiving());
             MinecraftForge.EVENT_BUS.post(getEntityName);
@@ -149,7 +144,7 @@ public class EventHandler {
     }
 
     @Nonnull
-    public static ItemStack getFirstShard(PlayerEntity player, ResourceLocation entityId) {
+    public static ItemStack getFirstShard(Player player, ResourceLocation entityId) {
         // Checks the offhand first
         ItemStack shardItem = player.getHeldItem(Hand.OFF_HAND);
         // If offhand isn't a shard, loop through the hotbar

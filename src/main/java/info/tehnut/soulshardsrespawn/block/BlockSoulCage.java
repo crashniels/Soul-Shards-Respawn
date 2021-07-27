@@ -2,25 +2,18 @@ package info.tehnut.soulshardsrespawn.block;
 
 import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -33,31 +26,31 @@ public class BlockSoulCage extends Block {
     public static final Property<Boolean> ACTIVE = BooleanProperty.create("active");
 
     public BlockSoulCage() {
-        super(Properties.create(Material.IRON).harvestLevel(1).harvestTool(ToolType.PICKAXE).hardnessAndResistance(3.0F).notSolid());
+        super(Properties.of(Material.METAL).harvestLevel(1).harvestTool(ToolType.PICKAXE).destroyTime(3.0F).noCollission());
 
-        setDefaultState(getStateContainer().getBaseState().with(POWERED, false).with(ACTIVE, false));
+        registerDefaultState(getStateDefinition().any().setValue(POWERED, false).setValue(ACTIVE, false));
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!player.isSteppingCarefully())
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
 
-        TileEntitySoulCage cage = (TileEntitySoulCage) world.getTileEntity(pos);
+        TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(pos);
         if (cage == null)
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
 
         ItemStack stack = cage.getInventory().extractItem(0, 1, false);
         if (stack.isEmpty())
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
 
         ItemHandlerHelper.giveItemToPlayer(player, stack);
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState state2, boolean someBool) {
+    public void onBlockAdded(BlockState state, Level world, BlockPos pos, BlockState state2, boolean someBool) {
         handleRedstoneChange(world, state, pos);
     }
 

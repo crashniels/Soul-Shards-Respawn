@@ -3,8 +3,8 @@ package info.tehnut.soulshardsrespawn.core;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import info.tehnut.soulshardsrespawn.core.data.MultiblockPattern;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
@@ -177,7 +177,7 @@ public class ConfigSoulShards {
         private static Map<String, Boolean> getDefaults() {
             Map<String, Boolean> defaults = Maps.newHashMap();
             ForgeRegistries.ENTITIES.getValues().stream()
-                    .filter(e -> e.getClassification() != EntityClassification.MISC)
+                    .filter(e -> e.getCategory() != MobCategory.MISC)
                     .forEach(e -> {
                         String entityId = e.getRegistryName().toString();
                         defaults.put(entityId, !DEFAULT_DISABLES.contains(entityId));

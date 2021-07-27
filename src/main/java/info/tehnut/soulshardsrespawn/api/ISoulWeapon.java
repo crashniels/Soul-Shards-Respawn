@@ -1,10 +1,10 @@
 package info.tehnut.soulshardsrespawn.api;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public interface ISoulWeapon {
 
-    int getSoulBonus(ItemStack stack, PlayerEntity player, LivingEntity killedEntity);
+    int getSoulBonus(ItemStack stack, Player player, LivingEntity killedEntity);
 }

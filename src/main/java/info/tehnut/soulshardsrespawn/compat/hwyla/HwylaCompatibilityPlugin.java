@@ -3,17 +3,11 @@ package info.tehnut.soulshardsrespawn.compat.hwyla;
 import info.tehnut.soulshardsrespawn.block.TileEntitySoulCage;
 import info.tehnut.soulshardsrespawn.core.data.Binding;
 import mcp.mobius.waila.api.*;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-@WailaPlugin
+@WailaPlugin(id = "soulshards")
 public class HwylaCompatibilityPlugin implements IWailaPlugin {
 
     @Override

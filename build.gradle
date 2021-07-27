@@ -1,16 +1,16 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-    id "maven-publish"
+    //id "com.matthewprenger.cursegradle" version "1.4.0"
+    //id "maven-publish"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -21,7 +21,7 @@ group = "mcp.mobius.waila"
 archivesBaseName = "SoulShardsRespawn-forge"
 
 minecraft {
-    mappings channel: "snapshot", version: "20200125-1.15.1"
+    mappings channel: 'official', version: '1.17.1'
 
     runs {
         client {
@@ -66,13 +66,17 @@ processResources {
 
 repositories {
     maven { url "https://tehnut.info/maven" }
+    maven { url "https://bai.jfrog.io/artifactory/maven" }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    compileOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}:api")
-    runtimeOnly fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+    // compile against the API
+    compileOnly fg.deobf("mcp.mobius.waila:wthit-api:forge-${wthitVersion}")
+
+    // run against the full jar
+    runtimeOnly fg.deobf("mcp.mobius.waila:wthit:forge-${wthitVersion}")
 }
 
 apply from: "gradle/process_mod_info.gradle"
@@ -109,7 +113,7 @@ tasks.build.dependsOn apiJar, sourcesJar
 tasks.withType(JavaCompile) { task ->
     task.options.encoding = 'UTF-8'
 }
-
+/*
 publishing {
     tasks.publish.dependsOn 'build'
     publications {
@@ -172,3 +176,4 @@ curseforge {
         addArtifact apiJar
     }
 }
+*/

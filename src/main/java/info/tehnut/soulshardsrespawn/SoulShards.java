@@ -7,8 +7,11 @@ import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
 import info.tehnut.soulshardsrespawn.core.util.JsonUtil;
 import info.tehnut.soulshardsrespawn.item.ItemSoulShard;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,9 +29,9 @@ public class SoulShards {
     public static final String NAME = "Soul Shards Respawn";
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final ConfigSoulShards CONFIG = JsonUtil.fromJson(TypeToken.get(ConfigSoulShards.class), new File(FMLPaths.CONFIGDIR.get().toFile(), MODID + "/" + MODID + ".json"), new ConfigSoulShards());
-    public static final ItemGroup TAB_SS = new ItemGroup(MODID) {
+    public static final CreativeModeTab TAB_SS = new CreativeModeTab(MODID) {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             ItemStack shard = new ItemStack(RegistrarSoulShards.SOUL_SHARD);
             Binding binding = new Binding(null, Tier.maxKills);
             ((ItemSoulShard) RegistrarSoulShards.SOUL_SHARD).updateBinding(shard, binding);
@@ -43,5 +46,15 @@ public class SoulShards {
     @SubscribeEvent
     public void setupClient(FMLClientSetupEvent event) {
         SoulShardsClient.initClient();
+        event.enqueueWork(this::registerPropertyOverride);
+    }
+
+    //From #51 of the original repo
+    private void registerPropertyOverride() {
+        ItemSoulShard item = new ItemSoulShard();
+        ItemProperties.register(item, new ResourceLocation(SoulShards.MODID, "bound"),
+                (stack, worldIn, entityIn, var) -> item.getBinding(stack) != null ? 1.0F : 0.0F);
+        ItemProperties.register(item, new ResourceLocation(SoulShards.MODID, "tier"),
+                (stack, worldIn, entityIn, var) -> item.getBindingFloatValue(stack));
     }
 }

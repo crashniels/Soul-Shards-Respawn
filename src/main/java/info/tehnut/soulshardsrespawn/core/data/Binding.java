@@ -2,15 +2,15 @@ package info.tehnut.soulshardsrespawn.core.data;
 
 import info.tehnut.soulshardsrespawn.api.IBinding;
 import info.tehnut.soulshardsrespawn.api.IShardTier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class Binding implements IBinding, INBTSerializable<CompoundNBT> {
+public class Binding implements IBinding, INBTSerializable<CompoundTag> {
 
     @Nullable
     private ResourceLocation boundEntity;
@@ -28,7 +28,7 @@ public class Binding implements IBinding, INBTSerializable<CompoundNBT> {
         this(boundEntity, null, kills);
     }
 
-    public Binding(CompoundNBT bindingTag) {
+    public Binding(CompoundTag bindingTag) {
         deserializeNBT(bindingTag);
     }
 
@@ -76,23 +76,23 @@ public class Binding implements IBinding, INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
 
         if (boundEntity != null)
             tag.putString("bound", boundEntity.toString());
         if (owner != null)
-            tag.putUniqueId("owner", owner);
+            tag.putUUID("owner", owner);
         tag.putInt("kills", kills);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("bound"))
             this.boundEntity = new ResourceLocation(nbt.getString("bound"));
-        if (nbt.hasUniqueId("owner"))
-            this.owner = nbt.getUniqueId("owner");
+        if (nbt.hasUUID("owner"))
+            this.owner = nbt.getUUID("owner");
         this.kills = nbt.getInt("kills");
     }
 
@@ -101,7 +101,7 @@ public class Binding implements IBinding, INBTSerializable<CompoundNBT> {
         if (!stack.hasTag())
             return null;
 
-        CompoundNBT tag = stack.getTag();
+        CompoundTag tag = stack.getTag();
         if (!tag.contains("binding"))
             return null;
 
