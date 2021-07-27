@@ -3,61 +3,64 @@ package info.tehnut.soulshardsrespawn.item;
 import info.tehnut.soulshardsrespawn.SoulShards;
 import info.tehnut.soulshardsrespawn.api.ISoulWeapon;
 import info.tehnut.soulshardsrespawn.core.RegistrarSoulShards;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.LazyValue;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.crafting.Ingredient;
 
 public class ItemVileSword extends SwordItem implements ISoulWeapon {
 
-    public static final IItemTier MATERIAL_VILE = new MaterialVile();
+    public static final Tier MATERIAL_VILE = new MaterialVile();
 
     public ItemVileSword() {
-        super(MATERIAL_VILE, 3, -2.4F, new Properties().group(SoulShards.TAB_SS));
+        super(MATERIAL_VILE, 3, -2.4F, new Properties().tab(SoulShards.TAB_SS));
     }
 
     @Override
-    public int getSoulBonus(ItemStack stack, PlayerEntity player, LivingEntity killedEntity) {
+    public int getSoulBonus(ItemStack stack, Player player, LivingEntity killedEntity) {
         return 1;
     }
 
-    public static class MaterialVile implements IItemTier {
+    public static class MaterialVile implements Tier {
 
-        private final LazyValue<Ingredient> ingredient;
+        private final LazyLoadedValue<Ingredient> ingredient;
 
         public MaterialVile() {
-            this.ingredient = new LazyValue<>(() -> Ingredient.fromItems(RegistrarSoulShards.CORRUPTED_INGOT));
+            this.ingredient = new LazyLoadedValue<>(() -> Ingredient.of(RegistrarSoulShards.CORRUPTED_INGOT));
         }
 
         @Override
-        public int getMaxUses() {
-            return ItemTier.IRON.getMaxUses();
+        public int getUses() {
+            return Tiers.IRON.getUses();
         }
 
         @Override
-        public float getEfficiency() {
-            return ItemTier.IRON.getEfficiency();
+        public float getSpeed() {
+            return Tiers.IRON.getSpeed();
         }
 
         @Override
-        public float getAttackDamage() {
-            return ItemTier.IRON.getAttackDamage();
+        public float getAttackDamageBonus() {
+            return Tiers.IRON.getAttackDamageBonus();
         }
 
         @Override
-        public int getHarvestLevel() {
-            return ItemTier.IRON.getHarvestLevel();
+        public int getLevel() {
+            return Tiers.IRON.getLevel();
         }
 
         @Override
-        public int getEnchantability() {
-            return ItemTier.IRON.getEnchantability();
+        public int getEnchantmentValue() {
+            return Tiers.IRON.getEnchantmentValue();
         }
 
         @Override
-        public Ingredient getRepairMaterial() {
-            return ingredient.getValue();
+        public Ingredient getRepairIngredient() {
+            return ingredient.get();
         }
 
     }
