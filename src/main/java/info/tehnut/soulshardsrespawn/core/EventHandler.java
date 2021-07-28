@@ -7,9 +7,14 @@ import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.MultiblockPattern;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
 import info.tehnut.soulshardsrespawn.item.ItemSoulShard;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -72,10 +77,10 @@ public class EventHandler {
                 binding = (Binding) newBinding.getBinding();
             }
 
-            ItemStack mainHand = player.getHeldItem(Hand.MAIN_HAND);
+            ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
 
             // Base of 1 plus enchantment bonus
-            int soulsGained = 1 + EnchantmentHelper.getEnchantmentLevel(RegistrarSoulShards.SOUL_STEALER, mainHand);
+            int soulsGained = 1 + EnchantmentHelper.getItemEnchantmentLevel(RegistrarSoulShards.SOUL_STEALER, mainHand);
             if (mainHand.getItem() instanceof ISoulWeapon)
                 soulsGained += ((ISoulWeapon) mainHand.getItem()).getSoulBonus(mainHand, player, event.getEntityLiving());
 
@@ -97,19 +102,19 @@ public class EventHandler {
     @SubscribeEvent
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
         MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
-        ItemStack held = event.getPlayer().getHeldItem(event.getHand());
-        if (!ItemStack.areItemsEqual(held, pattern.getCatalyst()))
+        ItemStack held = event.getPlayer().getItemInHand(event.getHand());
+        if (!ItemStack.isSame(held, pattern.getCatalyst()))
             return;
 
         BlockState state = event.getWorld().getBlockState(event.getPos());
         if (!pattern.isOriginBlock(state))
             return;
 
-        ActionResult<Set<BlockPos>> matched = pattern.match(event.getWorld(), event.getPos());
-        if (matched.getType() != ActionResultType.SUCCESS)
+        InteractionResultHolder<Set<BlockPos>> matched = pattern.match(event.getWorld(), event.getPos());
+        if (matched.getResult() != InteractionResult.SUCCESS)
             return;
 
-        for (BlockPos pos : matched.getResult())
+        for (BlockPos pos : matched.getObject())
             event.getWorld().destroyBlock(pos, false);
 
         held.shrink(1);
@@ -146,11 +151,11 @@ public class EventHandler {
     @Nonnull
     public static ItemStack getFirstShard(Player player, ResourceLocation entityId) {
         // Checks the offhand first
-        ItemStack shardItem = player.getHeldItem(Hand.OFF_HAND);
+        ItemStack shardItem = player.getItemInHand(InteractionHand.OFF_HAND);
         // If offhand isn't a shard, loop through the hotbar
         if (shardItem.isEmpty() || !(shardItem.getItem() instanceof ItemSoulShard)) {
             for (int i = 0; i < 9; i++) {
-                shardItem = player.inventory.getStackInSlot(i);
+                shardItem = player.getInventory().getItem(i);
                 if (!shardItem.isEmpty() && shardItem.getItem() instanceof ItemSoulShard) {
                     Binding binding = ((ItemSoulShard) shardItem.getItem()).getBinding(shardItem);
 

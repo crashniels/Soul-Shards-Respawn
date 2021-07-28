@@ -7,6 +7,7 @@ import info.tehnut.soulshardsrespawn.core.data.Tier;
 import info.tehnut.soulshardsrespawn.core.util.EnchantmentSoulStealer;
 import info.tehnut.soulshardsrespawn.item.ItemSoulShard;
 import info.tehnut.soulshardsrespawn.item.ItemVileSword;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -55,12 +56,12 @@ public class RegistrarSoulShards {
         Tier.readTiers();
 
         event.getRegistry().registerAll(
-                new BlockItem(SOUL_CAGE, new Item.Properties().group(SoulShards.TAB_SS)).setRegistryName(SOUL_CAGE.getRegistryName()),
+                new BlockItem(SOUL_CAGE, new Item.Properties().tab(SoulShards.TAB_SS)).setRegistryName(SOUL_CAGE.getRegistryName()),
                 new ItemVileSword().setRegistryName("vile_sword"),
                 new ItemSoulShard().setRegistryName("soul_shard"),
-                new Item(new Item.Properties().group(SoulShards.TAB_SS)).setRegistryName("corrupted_essence"),
-                new Item(new Item.Properties().group(SoulShards.TAB_SS)).setRegistryName("corrupted_ingot"),
-                new Item(new Item.Properties().group(SoulShards.TAB_SS)).setRegistryName("vile_dust")
+                new Item(new Item.Properties().tab(SoulShards.TAB_SS)).setRegistryName("corrupted_essence"),
+                new Item(new Item.Properties().tab(SoulShards.TAB_SS)).setRegistryName("corrupted_ingot"),
+                new Item(new Item.Properties().tab(SoulShards.TAB_SS)).setRegistryName("vile_dust")
         );
     }
 
