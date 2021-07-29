@@ -27,7 +27,7 @@ public class RegistrarSoulShards {
     public static final Block SOUL_CAGE = Blocks.AIR;
 
     @ObjectHolder("soul_cage")
-    public static final BlockEntityType<?> SOUL_CAGE_TE = BlockEntityType.BED;
+    public static final BlockEntityType<TileEntitySoulCage> SOUL_CAGE_TE = BlockEntityType.Builder.of(TileEntitySoulCage::new, SOUL_CAGE).build(null);
 
     public static final Item SOUL_SHARD = Items.AIR;
     public static final Item VILE_SWORD = Items.AIR;
@@ -47,7 +47,7 @@ public class RegistrarSoulShards {
     @SubscribeEvent
     public static void registerTileEntities(RegistryEvent.Register<BlockEntityType<?>> event) {
         event.getRegistry().register(
-                BlockEntityType.Builder.of(TileEntitySoulCage::new, SOUL_CAGE).build(null).setRegistryName(SoulShards.MODID, "soul_cage")
+                SOUL_CAGE_TE.setRegistryName(SoulShards.MODID, "soul_cage")
         );
     }
 

@@ -1,11 +1,13 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 plugins {
@@ -14,11 +16,15 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
 
 def build_number = System.getenv('BUILD_NUMBER') != null ? System.getenv('BUILD_NUMBER') : 'CUSTOM'
 version = "${mc_version}-${mod_version}-${build_number}"
 group = "mcp.mobius.waila"
 archivesBaseName = "SoulShardsRespawn-forge"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
     mappings channel: 'official', version: '1.17.1'
@@ -52,17 +58,19 @@ minecraft {
 }
 
 processResources {
-    inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.toml'
+    //inputs.property "version", project.version
 
-        expand 'version': project.version
-    }
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.toml'
-    }
+    //from(sourceSets.main.resources.srcDirs) {
+    //    include '**/*.toml'
+    //
+    //    expand 'version': project.version
+    //}
+    //from(sourceSets.main.resources.srcDirs) {
+    //     exclude '**/*.toml'
+    //}
 }
+
 
 repositories {
     maven { url "https://tehnut.info/maven" }
@@ -77,6 +85,11 @@ dependencies {
 
     // run against the full jar
     runtimeOnly fg.deobf("mcp.mobius.waila:wthit:forge-${wthitVersion}")
+
+    implementation 'org.spongepowered:mixin:0.8.3'
+
+    // Annotation Processors
+    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 }
 
 apply from: "gradle/process_mod_info.gradle"
@@ -113,6 +126,11 @@ tasks.build.dependsOn apiJar, sourcesJar
 tasks.withType(JavaCompile) { task ->
     task.options.encoding = 'UTF-8'
 }
+
+mixin {
+    add sourceSets.main, "soulshards.refmap.json"
+}
+
 /*
 publishing {
     tasks.publish.dependsOn 'build'

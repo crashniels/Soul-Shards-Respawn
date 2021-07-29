@@ -1,5 +1,6 @@
 package info.tehnut.soulshardsrespawn.block;
 
+import info.tehnut.soulshardsrespawn.core.RegistrarSoulShards;
 import info.tehnut.soulshardsrespawn.core.data.Binding;
 import info.tehnut.soulshardsrespawn.core.data.Tier;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,10 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -107,7 +111,7 @@ public class BlockSoulCage extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(POWERED, ACTIVE);
+        builder.add(ACTIVE, POWERED);
     }
 
     @Nullable
@@ -122,5 +126,14 @@ public class BlockSoulCage extends BaseEntityBlock {
             world.setBlock(pos, state.setValue(POWERED, false), 2);
         else if (!state.getValue(POWERED) && powered)
             world.setBlock(pos, state.setValue(POWERED, true), 2);
+    }
+
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    public BlockEntityTicker getTicker(Level world, BlockState blockState, BlockEntityType type) {
+        return world.isClientSide ? null : createTickerHelper(type, RegistrarSoulShards.SOUL_CAGE_TE, TileEntitySoulCage::tick);
     }
 }

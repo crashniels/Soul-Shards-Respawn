@@ -46,15 +46,5 @@ public class SoulShards {
     @SubscribeEvent
     public void setupClient(FMLClientSetupEvent event) {
         SoulShardsClient.initClient();
-        event.enqueueWork(this::registerPropertyOverride);
-    }
-
-    //From #51 of the original repo
-    private void registerPropertyOverride() {
-        ItemSoulShard item = new ItemSoulShard();
-        ItemProperties.register(item, new ResourceLocation(SoulShards.MODID, "bound"),
-                (stack, worldIn, entityIn, var) -> item.getBinding(stack) != null ? 1.0F : 0.0F);
-        ItemProperties.register(item, new ResourceLocation(SoulShards.MODID, "tier"),
-                (stack, worldIn, entityIn, var) -> item.getBindingFloatValue(stack));
     }
 }
