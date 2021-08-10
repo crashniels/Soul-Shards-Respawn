@@ -14,9 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,20 +26,19 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockSoulCage extends BaseEntityBlock {
 
-    public static final Property<Boolean> POWERED = BooleanProperty.create("powered");
     public static final Property<Boolean> ACTIVE = BooleanProperty.create("active");
+    public static final Property<Boolean> POWERED = BooleanProperty.create("powered");
 
     public BlockSoulCage() {
-        super(Properties.of(Material.METAL).harvestLevel(1).harvestTool(ToolType.PICKAXE).destroyTime(3.0F).noCollission());
+        super(Properties.copy(Blocks.SPAWNER));
 
-        registerDefaultState(getStateDefinition().any().setValue(POWERED, false).setValue(ACTIVE, false));
+        registerDefaultState(getStateDefinition().getOwner().defaultBlockState().setValue(ACTIVE, false).setValue(POWERED, false));
     }
 
     @Override
