@@ -102,6 +102,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
         MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
+        
         ItemStack held = event.getPlayer().getItemInHand(event.getHand());
         if (!ItemStack.isSame(held, pattern.getCatalyst()))
             return;
