@@ -86,10 +86,10 @@ dependencies {
     // run against the full jar
     runtimeOnly fg.deobf("mcp.mobius.waila:wthit:forge-${wthitVersion}")
 
-    implementation 'org.spongepowered:mixin:0.8.3'
+    implementation 'org.spongepowered:mixin:0.8.4'
 
     // Annotation Processors
-    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 
 apply from: "gradle/process_mod_info.gradle"
