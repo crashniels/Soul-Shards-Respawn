@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "soulshards",
+  "version": "${version}",
+  "name": "Soul Shards Respawn",
+  "description": "Powerful spawners for any mob!",
+  "authors": [
+    "TehNut"
+  ],
+  "contributors": [
+    "BBoldt",
+    "Draylar",
+    "Shnupbups"
+  ],
+  "contact": {
+    "sources": "https://github.com/crashniels/Soul-Shards-Respawn"
+  },
+  "license": "MIT",
+  "icon": "assets/soulshards/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "info.tehnut.soulshards.fabric.SoulShardsFabric"
+    ],
+    "client": [
+      "info.tehnut.soulshards.fabric.SoulShardsFabricClient"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": ">=1.17.1",
+    "architectury": ">=1.1.55"
+  },
+  "custom": {
+    "waila:plugins": {
+      "id": "soulshards",
+      "initializer": "info.tehnut.soulshards.compat.waila.SoulShardsWailaPlugin"
+    }
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
