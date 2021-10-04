@@ -1,5 +1,6 @@
 package info.tehnut.soulshards;
 
+import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.InteractionEvent;
 import info.tehnut.soulshards.api.BindingEvent;
 import info.tehnut.soulshards.api.ISoulWeapon;
@@ -17,36 +18,39 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 import java.util.Set;
 
-public class EventHandler {
+public class EventHandler implements InteractionEvent.RightClickBlock {
 
     public static void init() {
-        InteractionEvent.RightClickBlock
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
 
-            ItemStack held = player.getStackInHand(hand);
-            if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
-                return ActionResult.PASS;
+    }
 
-            BlockState worldState = world.getBlockState(hitResult.getBlockPos());
-            if (!pattern.isOriginBlock(worldState))
-                return ActionResult.PASS;
+    @Override
+    public EventResult click(PlayerEntity playerEntity, Hand hand, BlockPos blockPos, Direction direction) {
+        MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
 
-            TypedActionResult<Set<BlockPos>> match = pattern.match(world, hitResult.getBlockPos());
-            if (match.getResult() == ActionResult.FAIL)
-                return match.getResult();
+        ItemStack held = playerEntity.getStackInHand(hand);
+        if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
+            return EventResult.pass();
 
-            match.getValue().forEach(matchedPos -> world.breakBlock(matchedPos, false));
-            held.decrement(1);
-            ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
-            if (!player.getInventory().insertStack(shardStack))
-                ItemScatterer.spawn(world, player.getX(), player.getY(), player.getZ(), shardStack);
-            return ActionResult.SUCCESS;
-        });
+        BlockState worldState = playerEntity.getBlockStateAtPos();
+        if (!pattern.isOriginBlock(worldState))
+            return EventResult.pass();
+
+        TypedActionResult<Set<BlockPos>> match = pattern.match(playerEntity.getEntityWorld(), blockPos);
+        if (match.getResult() == ActionResult.FAIL)
+            return EventResult.pass();
+
+        match.getValue().forEach(matchedPos -> playerEntity.getEntityWorld().breakBlock(matchedPos, false));
+        held.decrement(1);
+        ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
+        if (!playerEntity.getInventory().insertStack(shardStack))
+            ItemScatterer.spawn(playerEntity.getEntityWorld(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), shardStack);
+        return EventResult.pass();
     }
 
 
@@ -137,4 +141,5 @@ public class EventHandler {
         Binding binding = new Binding(null, 0);
         return (Binding) BindingEvent.NEW_BINDINGS.invoker().onNewBinding(entity, binding).getValue();
     }
+
 }
