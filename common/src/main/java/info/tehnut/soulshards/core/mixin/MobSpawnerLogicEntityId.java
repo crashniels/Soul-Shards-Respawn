@@ -11,6 +11,8 @@ import net.minecraft.world.World;
 
 @Mixin(MobSpawnerLogic.class)
 public interface MobSpawnerLogicEntityId {
+
     @Invoker("getEntityId")
     Identifier getEntityIdentifier(@Nullable World world, BlockPos blockPos);
+
 }

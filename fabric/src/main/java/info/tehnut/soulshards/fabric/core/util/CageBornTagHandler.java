@@ -1,4 +1,4 @@
-package info.tehnut.soulshards.core.util;
+package info.tehnut.soulshards.fabric.core.util;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;

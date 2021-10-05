@@ -77,3 +77,8 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+/*
+loom {
+    mixinConfig "soulshards.mixins.json"
+}
+*/

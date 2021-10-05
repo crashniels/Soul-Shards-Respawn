@@ -2,7 +2,7 @@ package info.tehnut.soulshards.waila;
 /*
 import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
-import info.tehnut.soulshards.core.util.CageBornTagHandler;
+import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
 import mcp.mobius.waila.api.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

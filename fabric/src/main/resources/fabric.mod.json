@@ -18,6 +18,10 @@
   "license": "MIT",
   "icon": "assets/soulshards/icon.png",
   "environment": "*",
+  "mixins": [
+    "soulshards-fabric.mixins.json",
+    "soulshards-common.mixins.json"
+  ],
   "entrypoints": {
     "main": [
       "info.tehnut.soulshards.fabric.SoulShardsFabric"

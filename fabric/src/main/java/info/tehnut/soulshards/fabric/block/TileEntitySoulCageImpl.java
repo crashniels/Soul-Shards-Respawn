@@ -4,7 +4,7 @@ import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
-import info.tehnut.soulshards.core.util.CageBornTagHandler;
+import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.fabric.api.CageSpawnEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;

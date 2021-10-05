@@ -1,13 +1,12 @@
 {
   "required": true,
-  "package": "info.tehnut.soulshards.core.mixin",
+  "package": "info.tehnut.soulshards.fabric.mixin",
   "compatibilityLevel": "JAVA_16",
   "refmap": "soulshards-refmap.json",
   "mixins": [
     "MixinEntityLiving",
-    "MobSpawnerLogicEntityId",
     "MixinAnvilScreenHandler",
-    "info.tehnut.soulshards.fabric.mixin.MixinForgingScreenHandler"
+    "MixinForgingScreenHandler"
   ],
   "client": [
     "client.MixinItemRenderer"

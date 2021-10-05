@@ -18,4 +18,5 @@ public class MixinForgingScreenHandler {
     @Shadow
     @Final
     protected Inventory input;
+
 }
