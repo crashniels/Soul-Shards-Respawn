@@ -1,7 +1,8 @@
-package info.tehnut.soulshards.api;
+package info.tehnut.soulshards.fabric.api;
 
-import dev.architectury.event.Event;
-import dev.architectury.event.EventFactory;
+import info.tehnut.soulshards.api.IBinding;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -9,7 +10,7 @@ import net.minecraft.util.TypedActionResult;
 
 public class BindingEvent {
 
-    public static final Event<NewBinding> NEW_BINDINGS = EventFactory.createEventResult(NewBinding.class,
+    public static final Event<NewBinding> NEW_BINDINGS = EventFactory.createArrayBacked(NewBinding.class,
             (listeners) -> (entity, binding) -> {
                 for (NewBinding newBinding : listeners) {
                     TypedActionResult<IBinding> currentResult = newBinding.onNewBinding(entity, binding);
@@ -23,7 +24,7 @@ public class BindingEvent {
             }
     );
 
-    public static final Event<GainSouls> GAIN_SOULS = EventFactory.createEventResult(GainSouls.class,
+    public static final Event<GainSouls> GAIN_SOULS = EventFactory.createArrayBacked(GainSouls.class,
             (listeners) -> (entity, binding, amount) -> {
                 int soulsGained = amount;
 
@@ -36,7 +37,7 @@ public class BindingEvent {
             }
     );
 
-    public static final Event<GetEntityName> GET_ENTITY_ID = EventFactory.createEventResult(GetEntityName.class,
+    public static final Event<GetEntityName> GET_ENTITY_ID = EventFactory.createArrayBacked(GetEntityName.class,
             (listeners) -> (entity, currentName) -> {
 
                 for (GetEntityName getEntityName : listeners) {
@@ -59,4 +60,5 @@ public class BindingEvent {
     public interface GetEntityName {
         Identifier getEntityName(LivingEntity entity, Identifier currentName);
     }
+
 }

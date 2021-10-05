@@ -1,4 +1,4 @@
-package info.tehnut.soulshards.core.mixin;
+package info.tehnut.soulshards.fabric.mixin;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

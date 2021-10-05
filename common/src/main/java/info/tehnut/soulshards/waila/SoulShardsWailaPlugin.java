@@ -1,5 +1,5 @@
 package info.tehnut.soulshards.waila;
-
+/*
 import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.util.CageBornTagHandler;
@@ -58,3 +58,4 @@ public class SoulShardsWailaPlugin implements IWailaPlugin {
         }, TooltipPosition.BODY, TileEntitySoulCage.class);
     }
 }
+*/

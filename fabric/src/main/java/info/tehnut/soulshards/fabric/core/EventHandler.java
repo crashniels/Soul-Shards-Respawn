@@ -1,68 +1,65 @@
-package info.tehnut.soulshards;
+package info.tehnut.soulshards.fabric.core;
 
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.common.InteractionEvent;
-import info.tehnut.soulshards.api.BindingEvent;
+import java.util.Set;
+
+import info.tehnut.soulshards.ConfigSoulShards;
+import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.ISoulWeapon;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
 import info.tehnut.soulshards.core.data.Tier;
 import info.tehnut.soulshards.core.util.CageBornTagHandler;
+import info.tehnut.soulshards.fabric.api.BindingEvent;
 import info.tehnut.soulshards.item.ItemSoulShard;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Set;
-
-public class EventHandler implements InteractionEvent.RightClickBlock {
+public class EventHandler {
 
     public static void init() {
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
 
+            ItemStack held = player.getStackInHand(hand);
+            if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
+                return ActionResult.PASS;
+
+            BlockState worldState = world.getBlockState(hitResult.getBlockPos());
+            if (!pattern.isOriginBlock(worldState))
+                return ActionResult.PASS;
+
+            TypedActionResult<Set<BlockPos>> match = pattern.match(world, hitResult.getBlockPos());
+            if (match.getResult() == ActionResult.FAIL)
+                return match.getResult();
+
+            match.getValue().forEach(matchedPos -> world.breakBlock(matchedPos, false));
+            held.decrement(1);
+            ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
+            if (!player.getInventory().insertStack(shardStack))
+                ItemScatterer.spawn(world, player.getX(), player.getY(), player.getZ(), shardStack);
+            return ActionResult.SUCCESS;
+        });
     }
-
-    @Override
-    public EventResult click(PlayerEntity playerEntity, Hand hand, BlockPos blockPos, Direction direction) {
-        MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
-
-        ItemStack held = playerEntity.getStackInHand(hand);
-        if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
-            return EventResult.pass();
-
-        BlockState worldState = playerEntity.getBlockStateAtPos();
-        if (!pattern.isOriginBlock(worldState))
-            return EventResult.pass();
-
-        TypedActionResult<Set<BlockPos>> match = pattern.match(playerEntity.getEntityWorld(), blockPos);
-        if (match.getResult() == ActionResult.FAIL)
-            return EventResult.pass();
-
-        match.getValue().forEach(matchedPos -> playerEntity.getEntityWorld().breakBlock(matchedPos, false));
-        held.decrement(1);
-        ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
-        if (!playerEntity.getInventory().insertStack(shardStack))
-            ItemScatterer.spawn(playerEntity.getEntityWorld(), playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), shardStack);
-        return EventResult.pass();
-    }
-
 
     public static void onEntityDeath(LivingEntity killed, DamageSource source) {
-        // Using canUsePortals because it appears to be MCP's isNonBoss().
-        // Only returns false for Wither and Ender Dragon
         if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !killed.canUsePortals())
             return;
 
-        if (!SoulShards.CONFIG.getBalance().countCageBornForShard() && 
-        //killed.getDataTracker().get(MixinEntityLiving.cageBornTag))
-        CageBornTagHandler.getCageBornTag(killed))
+        if (!SoulShards.CONFIG.getBalance().countCageBornForShard() &&
+                CageBornTagHandler.getCageBornTag(killed))
             return;
 
         if (source.getAttacker() instanceof PlayerEntity) {

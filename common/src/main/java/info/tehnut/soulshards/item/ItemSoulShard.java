@@ -1,5 +1,6 @@
 package info.tehnut.soulshards.item;
 
+import dev.architectury.registry.item.ItemPropertiesRegistry;
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.api.ISoulShard;
@@ -8,7 +9,6 @@ import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.Tier;
 import info.tehnut.soulshards.core.mixin.MobSpawnerLogicEntityId;
-import net.fabricmc.fabric.mixin.object.builder.ModelPredicateProviderRegistryAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
@@ -36,8 +36,8 @@ public class ItemSoulShard extends Item implements ISoulShard {
     public ItemSoulShard() {
         super(new Settings().maxCount(1).group(RegistrarSoulShards.SoulShardsIG));
         
-        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MOD_ID, "bound"), (stack, worldIn, entityIn, _value) -> getBinding(stack) != null ? 1.0F : 0.0F);
-        ModelPredicateProviderRegistryAccessor.callRegister(new Identifier(SoulShards.MOD_ID, "tier"), (stack, world, entity, _value) -> {
+        ItemPropertiesRegistry.registerGeneric(new Identifier(SoulShards.MOD_ID, "bound"), (stack, worldIn, entityIn, _value) -> getBinding(stack) != null ? 1.0F : 0.0F);
+        ItemPropertiesRegistry.registerGeneric(new Identifier(SoulShards.MOD_ID, "tier"), (stack, world, entity, _value) -> {
             Binding binding = getBinding(stack);
             if (binding == null)
                 return 0F;

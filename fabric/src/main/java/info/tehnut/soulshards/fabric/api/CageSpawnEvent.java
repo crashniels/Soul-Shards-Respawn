@@ -1,14 +1,15 @@
-package info.tehnut.soulshards.api;
+package info.tehnut.soulshards.fabric.api;
 
-import dev.architectury.event.Event;
-import dev.architectury.event.EventFactory;
+import info.tehnut.soulshards.api.IBinding;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 
 public interface CageSpawnEvent {
 
-    Event<CageSpawnEvent> CAGE_SPAWN = EventFactory.createCompoundEventResult(CageSpawnEvent.class,
+    Event<CageSpawnEvent> CAGE_SPAWN = EventFactory.createArrayBacked(CageSpawnEvent.class,
             (listeners) -> (binding, shardStack, toSpawn) -> {
                 for (CageSpawnEvent event : listeners) {
                     ActionResult result = event.onCageSpawn(binding, shardStack, toSpawn);

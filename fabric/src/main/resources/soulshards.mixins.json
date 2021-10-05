@@ -7,7 +7,7 @@
     "MixinEntityLiving",
     "MobSpawnerLogicEntityId",
     "MixinAnvilScreenHandler",
-    "MixinForgingScreenHandler"
+    "info.tehnut.soulshards.fabric.mixin.MixinForgingScreenHandler"
   ],
   "client": [
     "client.MixinItemRenderer"
