@@ -4,7 +4,7 @@
   "package": "info.tehnut.soulshards.core.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "MobSpawnerLogicEntityId"
+    "MixinMobSpawnerLogic"
   ],
   "client": [
   ],

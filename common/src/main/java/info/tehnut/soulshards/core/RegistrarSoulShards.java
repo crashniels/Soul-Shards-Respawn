@@ -5,14 +5,15 @@ import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import info.tehnut.soulshards.SoulShards;
+import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.block.BlockSoulCage;
-import info.tehnut.soulshards.block.TileEntitySoulCage;
 import info.tehnut.soulshards.core.util.EnchantmentSoulStealer;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import info.tehnut.soulshards.item.ItemVileSword;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class RegistrarSoulShards {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(SoulShards.MOD_ID, Registry.ITEM_KEY);
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(SoulShards.MOD_ID, Registry.BLOCK_KEY);
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(SoulShards.MOD_ID, Registry.BLOCK_ENTITY_TYPE_KEY);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(SoulShards.MOD_ID, Registry.BLOCK_ENTITY_TYPE_KEY);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(SoulShards.MOD_ID, Registry.ENCHANTMENT_KEY);
 
     public static final ItemGroup SoulShardsIG = CreativeTabRegistry.create(
@@ -45,14 +46,20 @@ public class RegistrarSoulShards {
     public static final RegistrySupplier<Block> SOUL_CAGE = BLOCKS.register("soul_cage", () -> new BlockSoulCage());
 
     /*
-        Register BlockEntities
+        Register BlockEntityTypes
     */
-    public static final RegistrySupplier<BlockEntityType<?>> SOUL_CAGE_TE = BLOCK_ENTITIES.register("soul_cage",
-            () -> BlockEntityHooks.builder(TileEntitySoulCage::new).build(null));
+    public static final RegistrySupplier<BlockEntityType<?>> SOUL_CAGE_TE = BLOCK_ENTITY_TYPES.register("soul_cage",
+            () -> BlockEntityHooks.builder(BlockEntitySoulCage::new, SOUL_CAGE.get()).build(null));
 
     /*
         Register Enchantments
     */
     public static final RegistrySupplier<Enchantment> SOUL_STEALER = ENCHANTMENTS.register("soul_stealer", () -> new EnchantmentSoulStealer());
+
+    /*
+        Register BlockItems
+    */
+    public static final RegistrySupplier<Item> SOUL_CAGE_BI = ITEMS.register("soul_cage", () -> new BlockItem(SOUL_CAGE.get(), new Item.Settings().group(RegistrarSoulShards.SoulShardsIG)));
+
 
 }

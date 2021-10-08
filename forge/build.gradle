@@ -77,8 +77,10 @@ publishing {
         // Add repositories to publish to here.
     }
 }
-/*
+
 loom {
-    mixinConfig "soulshards.mixins.json"
+    forge{
+        mixinConfig "soulshards-common.mixins.json"
+    }
 }
-*/
+

@@ -4,15 +4,16 @@ import dev.architectury.registry.item.ItemPropertiesRegistry;
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.api.ISoulShard;
-import info.tehnut.soulshards.block.TileEntitySoulCage;
+import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.Tier;
-import info.tehnut.soulshards.core.mixin.MobSpawnerLogicEntityId;
+import info.tehnut.soulshards.core.mixin.MixinMobSpawnerLogic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -68,7 +69,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 return ActionResult.PASS;
 
             try {
-                Identifier entityId = ((MobSpawnerLogicEntityId) spawner.getLogic()).getEntityIdentifier(context.getWorld(), context.getBlockPos());
+                Identifier entityId = ((MixinMobSpawnerLogic) spawner.getLogic()).getEntityIdentifier(context.getWorld(), context.getBlockPos());
                 if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
                     return ActionResult.PASS;
 
@@ -85,7 +86,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
             if (binding.getBoundEntity() == null)
                 return ActionResult.FAIL;
 
-            TileEntitySoulCage cage = (TileEntitySoulCage) context.getWorld().getBlockEntity(context.getBlockPos());
+            BlockEntitySoulCage cage = (BlockEntitySoulCage) context.getWorld().getBlockEntity(context.getBlockPos());
             if (cage == null)
                 return ActionResult.PASS;
 
@@ -94,7 +95,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 cage.getInventory().setStack(0, context.getStack().copy());
                 context.getStack().decrement(1);
                 cage.markDirty();
-                TileEntitySoulCage.setState(true, context.getWorld(), context.getBlockPos(), state);
+                BlockEntitySoulCage.setState(true, context.getWorld(), context.getBlockPos(), state);
                 return ActionResult.SUCCESS;
             }
         }
@@ -161,4 +162,16 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
         tag.put("binding", binding.serializeNBT());
     }
+
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        Binding binding = getBinding(stack);
+        return SoulShards.CONFIG.getClient().displayDurabilityBar() && binding != null && binding.getKills() < Tier.maxKills;
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return super.getItemBarColor(stack);
+    }
+
 }

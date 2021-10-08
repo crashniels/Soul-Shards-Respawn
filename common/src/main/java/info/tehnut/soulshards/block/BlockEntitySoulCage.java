@@ -17,15 +17,15 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileEntitySoulCage extends BlockEntity {
+public class BlockEntitySoulCage extends BlockEntity {
 
     private static Inventory inventory;
     private static boolean active;
 
-    public TileEntitySoulCage(BlockPos blockPos, BlockState blockState) {
+    public BlockEntitySoulCage(BlockPos blockPos, BlockState blockState) {
         super(RegistrarSoulShards.SOUL_CAGE_TE.get(), blockPos, blockState);
 
-        TileEntitySoulCage.inventory = new SimpleInventory(1){
+        BlockEntitySoulCage.inventory = new SimpleInventory(1){
             @Override
             public boolean isValid(int slot, ItemStack stack) {
                 if (!(stack.getItem() instanceof ItemSoulShard))
@@ -62,7 +62,7 @@ public class TileEntitySoulCage extends BlockEntity {
 
         if (tag.contains("shard"))
             inventory.setStack(0, ItemStack.fromNbt(tag.getCompound("shard")));
-        TileEntitySoulCage.active = tag.getBoolean("active");
+        BlockEntitySoulCage.active = tag.getBoolean("active");
     }
 
     @Override
@@ -133,7 +133,7 @@ public class TileEntitySoulCage extends BlockEntity {
             return;
 
         world.setBlockState(blockPos, state.with(BlockSoulCage.ACTIVE, active));
-        TileEntitySoulCage.active = active;
+        BlockEntitySoulCage.active = active;
     }
 
     public static boolean ownerOnline(World world) {

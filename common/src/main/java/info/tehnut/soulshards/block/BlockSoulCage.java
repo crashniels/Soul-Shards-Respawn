@@ -44,7 +44,7 @@ public class BlockSoulCage extends BlockWithEntity {
         if (!player.isSneaking())
             return ActionResult.PASS;
 
-        TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(pos);
+        BlockEntitySoulCage cage = (BlockEntitySoulCage) world.getBlockEntity(pos);
         if (cage == null)
             return ActionResult.PASS;
 
@@ -64,7 +64,7 @@ public class BlockSoulCage extends BlockWithEntity {
     @Override
     public void onStateReplaced(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean boolean_1) {
         if (blockState.hasBlockEntity() && blockState.getBlock() != blockState2.getBlock()) {
-            TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(blockPos);
+            BlockEntitySoulCage cage = (BlockEntitySoulCage) world.getBlockEntity(blockPos);
             if (cage != null)
                 ItemScatterer.spawn(world, blockPos, cage.getInventory());
         }
@@ -79,11 +79,11 @@ public class BlockSoulCage extends BlockWithEntity {
 
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        TileEntitySoulCage cage = (TileEntitySoulCage) world.getBlockEntity(pos);
+        BlockEntitySoulCage cage = (BlockEntitySoulCage) world.getBlockEntity(pos);
         if (cage == null)
             return 0;
 
-        Binding binding = TileEntitySoulCage.getBinding();
+        Binding binding = BlockEntitySoulCage.getBinding();
         if (binding == null)
             return 0;
 
@@ -118,7 +118,7 @@ public class BlockSoulCage extends BlockWithEntity {
 
     @Override
     public BlockEntity createBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new TileEntitySoulCage(blockPos, blockState);
+        return new BlockEntitySoulCage(blockPos, blockState);
     }
 
     private void handleRedstoneChange(World world, BlockState state, BlockPos pos) {
@@ -131,6 +131,6 @@ public class BlockSoulCage extends BlockWithEntity {
 
     @Override
     public BlockEntityTicker getTicker(World world, BlockState blockState, BlockEntityType type) {
-        return world.isClient ? null : checkType(type, RegistrarSoulShards.SOUL_CAGE_TE.get(), TileEntitySoulCage::tick);
+        return world.isClient ? null : checkType(type, RegistrarSoulShards.SOUL_CAGE_TE.get(), BlockEntitySoulCage::tick);
     }
 }

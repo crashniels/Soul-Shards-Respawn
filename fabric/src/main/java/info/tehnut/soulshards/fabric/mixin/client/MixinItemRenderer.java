@@ -45,7 +45,7 @@ public abstract class MixinItemRenderer {
         RenderSystem.disableBlend();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        //buffer.begin(7, VertexFormats.POSITION_COLOR);
+        //buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
         buffer.begin(DrawMode.LINES, VertexFormats.POSITION_COLOR);
         prepareQuad(buffer, x + 2, y + 13, 13, 2, 0, 0, 0);
         prepareQuad(buffer, x + 2, y + 13, (int) (percentage * 13), 1, color >> 16 & 255, color >> 8 & 255, color & 255);

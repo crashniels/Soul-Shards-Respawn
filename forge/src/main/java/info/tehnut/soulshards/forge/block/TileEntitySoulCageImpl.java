@@ -2,7 +2,7 @@ package info.tehnut.soulshards.forge.block;
 
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
-import info.tehnut.soulshards.block.TileEntitySoulCage;
+import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.forge.api.CageSpawnEvent;
 import net.minecraft.block.BlockState;
@@ -23,7 +23,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class TileEntitySoulCageImpl {
 
     private static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-        Binding binding = TileEntitySoulCage.getBinding();
+        Binding binding = BlockEntitySoulCage.getBinding();
         if (binding == null || binding.getBoundEntity() == null)
             return;
 
@@ -52,7 +52,7 @@ public class TileEntitySoulCageImpl {
                     if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !entityLiving.canUsePortals()) // canUsePortals -> isNonBoss
                         continue;
 
-                    CageSpawnEvent event = new CageSpawnEvent(binding, TileEntitySoulCage.getInventory().getStack(0), entityLiving);
+                    CageSpawnEvent event = new CageSpawnEvent(binding, BlockEntitySoulCage.getInventory().getStack(0), entityLiving);
                     if (MinecraftForge.EVENT_BUS.post(event))
                         continue;
 

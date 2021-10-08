@@ -21,7 +21,7 @@ public class SoulShards {
         ConfigSoulShards.handleMultiblock();
         RegistrarSoulShards.BLOCKS.register();
         RegistrarSoulShards.ITEMS.register();
-        RegistrarSoulShards.BLOCK_ENTITIES.register();
+        RegistrarSoulShards.BLOCK_ENTITY_TYPES.register();
         RegistrarSoulShards.ENCHANTMENTS.register();
     }
 

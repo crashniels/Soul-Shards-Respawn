@@ -2,7 +2,7 @@ package info.tehnut.soulshards.fabric.block;
 
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
-import info.tehnut.soulshards.block.TileEntitySoulCage;
+import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.fabric.api.CageSpawnEvent;
@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 public class TileEntitySoulCageImpl {
 
     private static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-        Binding binding = TileEntitySoulCage.getBinding();
+        Binding binding = BlockEntitySoulCage.getBinding();
         if (binding == null || binding.getBoundEntity() == null)
             return;
 
@@ -53,7 +53,7 @@ public class TileEntitySoulCageImpl {
                     if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !entityLiving.canUsePortals()) // canUsePortals -> isNonBoss
                         continue;
 
-                    ActionResult result = CageSpawnEvent.CAGE_SPAWN.invoker().onCageSpawn(binding, TileEntitySoulCage.getInventory().getStack(0), entityLiving);
+                    ActionResult result = CageSpawnEvent.CAGE_SPAWN.invoker().onCageSpawn(binding, BlockEntitySoulCage.getInventory().getStack(0), entityLiving);
                     if (result == ActionResult.FAIL)
                         continue spawnLoop;
 
