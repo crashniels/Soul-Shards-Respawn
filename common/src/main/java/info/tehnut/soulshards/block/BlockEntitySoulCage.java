@@ -85,8 +85,7 @@ public class BlockEntitySoulCage extends BlockEntity {
         //if (!getWorld().getServer().getWorld(DimensionType.OVERWORLD_ID).getGameRules().getBoolean(SoulShards.allowCageSpawns))
         //    return new TypedActionResult<>(ActionResult.FAIL, null);
 
-        BlockState state = world.getBlockState(blockPos);
-        if (state.getBlock() != RegistrarSoulShards.SOUL_CAGE)
+        if (blockState.getBlock() != RegistrarSoulShards.SOUL_CAGE.get())
             return new TypedActionResult<>(ActionResult.FAIL, null);
 
         ItemStack shardStack = inventory.getStack(0);
@@ -108,9 +107,9 @@ public class BlockEntitySoulCage extends BlockEntity {
             return new TypedActionResult<>(ActionResult.FAIL, binding);
 
         if (!SoulShards.CONFIG.getBalance().requireRedstoneSignal()) {
-            if (state.get(BlockSoulCage.POWERED) && tier.checkRedstone())
+            if (blockState.get(BlockSoulCage.POWERED) && tier.checkRedstone())
                 return new TypedActionResult<>(ActionResult.FAIL, binding);
-        } else if (!state.get(BlockSoulCage.POWERED))
+        } else if (!blockState.get(BlockSoulCage.POWERED))
             return new TypedActionResult<>(ActionResult.FAIL, binding);
 
         if (tier.checkPlayer() && world.getClosestPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ(), 16, false) == null)
@@ -128,11 +127,10 @@ public class BlockEntitySoulCage extends BlockEntity {
     }
 
     public static void setState(boolean active, World world, BlockPos blockPos, BlockState blockState) {
-        BlockState state = blockState;
-        if (!(state.getBlock() instanceof BlockSoulCage))
+        if (!(blockState.getBlock() instanceof BlockSoulCage))
             return;
 
-        world.setBlockState(blockPos, state.with(BlockSoulCage.ACTIVE, active));
+        world.setBlockState(blockPos, blockState.with(BlockSoulCage.ACTIVE, active));
         BlockEntitySoulCage.active = active;
     }
 

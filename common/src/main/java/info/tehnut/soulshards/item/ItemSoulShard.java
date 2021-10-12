@@ -1,5 +1,6 @@
 package info.tehnut.soulshards.item;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
@@ -13,7 +14,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -82,7 +82,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        } else if (state.getBlock() == RegistrarSoulShards.SOUL_CAGE) {
+        } else if (state.getBlock() == RegistrarSoulShards.SOUL_CAGE.get()) {
             if (binding.getBoundEntity() == null)
                 return ActionResult.FAIL;
 
@@ -90,9 +90,9 @@ public class ItemSoulShard extends Item implements ISoulShard {
             if (cage == null)
                 return ActionResult.PASS;
 
-            ItemStack cageStack = cage.getInventory().getStack(0);
-            if (cageStack.isEmpty() && cage.getInventory().isValid(0, context.getStack())) {
-                cage.getInventory().setStack(0, context.getStack().copy());
+            ItemStack cageStack = BlockEntitySoulCage.getInventory().getStack(0);
+            if (cageStack.isEmpty() && BlockEntitySoulCage.getInventory().isValid(0, context.getStack())) {
+                BlockEntitySoulCage.getInventory().setStack(0, context.getStack().copy());
                 context.getStack().decrement(1);
                 cage.markDirty();
                 BlockEntitySoulCage.setState(true, context.getWorld(), context.getBlockPos(), state);
@@ -111,7 +111,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
         Style greyColor = Style.EMPTY.withColor(Formatting.GRAY);
         if (binding.getBoundEntity() != null) {
-            EntityType entityEntry = Registry.ENTITY_TYPE.get(binding.getBoundEntity());
+            EntityType<?> entityEntry = Registry.ENTITY_TYPE.get(binding.getBoundEntity());
             if (entityEntry != null)
                 tooltip.add(new TranslatableText("tooltip.soulshards.bound", entityEntry.getName()).setStyle(greyColor));
             else
@@ -172,6 +172,11 @@ public class ItemSoulShard extends Item implements ISoulShard {
     @Override
     public int getItemBarColor(ItemStack stack) {
         return super.getItemBarColor(stack);
+    }
+
+    @ExpectPlatform
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return 0;
     }
 
 }

@@ -1,10 +1,11 @@
-package info.tehnut.soulshards.forge.block;
+package info.tehnut.soulshards.block.fabric;
 
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.core.data.Binding;
-import info.tehnut.soulshards.forge.api.CageSpawnEvent;
+import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
+import info.tehnut.soulshards.fabric.api.CageSpawnEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityType;
@@ -12,22 +13,22 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.LightType;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.registries.ForgeRegistries;
 
-public class TileEntitySoulCageImpl {
+public class BlockEntitySoulCageImpl {
 
-    private static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
+    public static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
         Binding binding = BlockEntitySoulCage.getBinding();
         if (binding == null || binding.getBoundEntity() == null)
             return;
 
-        EntityType entityType = ForgeRegistries.ENTITIES.getValue(binding.getBoundEntity());
+        EntityType<?> entityType = Registry.ENTITY_TYPE.get(binding.getBoundEntity());
         IShardTier tier = binding.getTier();
         spawnLoop:
         for (int i = 0; i < tier.getSpawnAmount(); i++) {
@@ -46,15 +47,15 @@ public class TileEntitySoulCageImpl {
                     continue;
 
                 entityLiving.refreshPositionAndAngles(spawnAt, world.random.nextFloat() * 360F, 0F);
-                entityLiving.getPersistentData().putBoolean("cageBorn", true);
+                CageBornTagHandler.setCageBornTag(entityLiving, true);
 
                 if (entityLiving.isAlive() && !hasReachedSpawnCap(entityLiving, blockPos, world) && !isColliding(entityLiving, world)) {
                     if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !entityLiving.canUsePortals()) // canUsePortals -> isNonBoss
                         continue;
 
-                    CageSpawnEvent event = new CageSpawnEvent(binding, BlockEntitySoulCage.getInventory().getStack(0), entityLiving);
-                    if (MinecraftForge.EVENT_BUS.post(event))
-                        continue;
+                    ActionResult result = CageSpawnEvent.CAGE_SPAWN.invoker().onCageSpawn(binding, BlockEntitySoulCage.getInventory().getStack(0), entityLiving);
+                    if (result == ActionResult.FAIL)
+                        continue spawnLoop;
 
                     world.spawnEntity(entityLiving);
                     if (entityLiving instanceof MobEntity)
@@ -73,7 +74,7 @@ public class TileEntitySoulCageImpl {
         Box box = new Box(blockPos.getX() - 16, blockPos.getY() - 16, blockPos.getZ() - 16, blockPos.getX() + 16, blockPos.getY() + 16, blockPos.getZ() + 16);
 
         int mobCount = world.getEntitiesByClass(living.getClass(), box, e -> e != null &&
-                e.getPersistentData().getBoolean("cageBorn")).size();
+                CageBornTagHandler.getCageBornTag(living)).size();
         return mobCount >= SoulShards.CONFIG.getBalance().getSpawnCap();
     }
 

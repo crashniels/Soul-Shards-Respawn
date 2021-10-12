@@ -34,8 +34,8 @@ public class RegistrarSoulShards {
     /*
         Register Items
     */
-    public static final RegistrySupplier<Item> SOUL_SHARD = ITEMS.register("soul_shard", () -> new ItemSoulShard());
-    public static final RegistrySupplier<Item> VILE_SWORD = ITEMS.register("vile_sword", () -> new ItemVileSword());
+    public static final RegistrySupplier<Item> SOUL_SHARD = ITEMS.register("soul_shard", ItemSoulShard::new);
+    public static final RegistrySupplier<Item> VILE_SWORD = ITEMS.register("vile_sword", ItemVileSword::new);
     public static final RegistrySupplier<Item> CORRUPTED_ESSENCE = ITEMS.register("corrupted_essence", () -> new Item(new Item.Settings().group(RegistrarSoulShards.SoulShardsIG)));
     public static final RegistrySupplier<Item> CORRUPTED_INGOT = ITEMS.register("corrupted_ingot", () -> new Item(new Item.Settings().group(RegistrarSoulShards.SoulShardsIG)));
     public static final RegistrySupplier<Item> VILE_DUST = ITEMS.register("vile_dust", () -> new Item(new Item.Settings().group(RegistrarSoulShards.SoulShardsIG)));
@@ -43,7 +43,7 @@ public class RegistrarSoulShards {
     /*
         Register Blocks
     */
-    public static final RegistrySupplier<Block> SOUL_CAGE = BLOCKS.register("soul_cage", () -> new BlockSoulCage());
+    public static final RegistrySupplier<Block> SOUL_CAGE = BLOCKS.register("soul_cage", BlockSoulCage::new);
 
     /*
         Register BlockEntityTypes
@@ -54,7 +54,7 @@ public class RegistrarSoulShards {
     /*
         Register Enchantments
     */
-    public static final RegistrySupplier<Enchantment> SOUL_STEALER = ENCHANTMENTS.register("soul_stealer", () -> new EnchantmentSoulStealer());
+    public static final RegistrySupplier<Enchantment> SOUL_STEALER = ENCHANTMENTS.register("soul_stealer", EnchantmentSoulStealer::new);
 
     /*
         Register BlockItems

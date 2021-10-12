@@ -19,8 +19,7 @@
   "icon": "assets/soulshards/icon.png",
   "environment": "*",
   "mixins": [
-    "soulshards-fabric.mixins.json",
-    "soulshards-common.mixins.json"
+    "soulshards-fabric.mixins.json"
   ],
   "entrypoints": {
     "main": [

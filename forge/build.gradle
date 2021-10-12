@@ -79,7 +79,7 @@ publishing {
 }
 
 loom {
-    forge{
+    forge {
         mixinConfig "soulshards-common.mixins.json"
     }
 }

@@ -48,7 +48,7 @@ public class BlockSoulCage extends BlockWithEntity {
         if (cage == null)
             return ActionResult.PASS;
 
-        ItemStack stack = cage.getInventory().getStack(0);
+        ItemStack stack = BlockEntitySoulCage.getInventory().getStack(0);
         if (stack.isEmpty())
             return ActionResult.PASS;
 
@@ -66,7 +66,7 @@ public class BlockSoulCage extends BlockWithEntity {
         if (blockState.hasBlockEntity() && blockState.getBlock() != blockState2.getBlock()) {
             BlockEntitySoulCage cage = (BlockEntitySoulCage) world.getBlockEntity(blockPos);
             if (cage != null)
-                ItemScatterer.spawn(world, blockPos, cage.getInventory());
+                ItemScatterer.spawn(world, blockPos, BlockEntitySoulCage.getInventory());
         }
 
         super.onStateReplaced(blockState, world, blockPos, blockState2, boolean_1);
@@ -132,5 +132,6 @@ public class BlockSoulCage extends BlockWithEntity {
     @Override
     public BlockEntityTicker getTicker(World world, BlockState blockState, BlockEntityType type) {
         return world.isClient ? null : checkType(type, RegistrarSoulShards.SOUL_CAGE_TE.get(), BlockEntitySoulCage::tick);
+
     }
 }
