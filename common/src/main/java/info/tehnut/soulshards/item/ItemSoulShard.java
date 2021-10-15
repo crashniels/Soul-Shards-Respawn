@@ -1,6 +1,5 @@
 package info.tehnut.soulshards.item;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.registry.item.ItemPropertiesRegistry;
 import info.tehnut.soulshards.SoulShards;
 import info.tehnut.soulshards.api.IShardTier;
@@ -171,12 +170,16 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
     @Override
     public int getItemBarColor(ItemStack stack) {
-        return super.getItemBarColor(stack);
+        return 0x9F63ED;
     }
 
-    @ExpectPlatform
-    public double getDurabilityForDisplay(ItemStack stack) {
-        return 0;
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        Binding binding = getBinding(stack);
+        if (binding == null)
+            return 1;
+
+        return Math.round((float) binding.getKills() * 13.0F / (float) Tier.maxKills);
     }
 
 }

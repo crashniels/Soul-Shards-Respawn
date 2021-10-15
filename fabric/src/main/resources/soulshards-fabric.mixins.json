@@ -9,7 +9,6 @@
     "MixinForgingScreenHandler"
   ],
   "client": [
-    "client.MixinItemRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
