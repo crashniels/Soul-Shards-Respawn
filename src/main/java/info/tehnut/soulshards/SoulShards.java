@@ -22,8 +22,7 @@ import net.minecraft.world.GameRules.Rule;
 public class SoulShards implements ModInitializer {
 
     public static final String MODID = "soulshards";
-    public static final ConfigSoulShards CONFIG = JsonUtil.fromJson(TypeToken.get(ConfigSoulShards.class), new File(FabricLoader.getInstance().getConfigDirectory(), MODID + "/" + MODID + ".json"), new ConfigSoulShards());
-    //public static TrackedData<Boolean> cageBornTag;
+    public static final ConfigSoulShards CONFIG = JsonUtil.fromJson(TypeToken.get(ConfigSoulShards.class), new File(FabricLoader.getInstance().getConfigDir().toFile(), MODID + "/" + MODID + ".json"), new ConfigSoulShards());
     public static Rule<GameRules.BooleanRule> allowCageSpawns;
 
     @Override

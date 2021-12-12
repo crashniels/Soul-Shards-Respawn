@@ -161,4 +161,25 @@ public class ItemSoulShard extends Item implements ISoulShard {
 
         tag.put("binding", binding.serializeNBT());
     }
+
+    @Override
+    public boolean isItemBarVisible(ItemStack stack) {
+        Binding binding = getBinding(stack);
+        return SoulShards.CONFIG.getClient().displayDurabilityBar() && binding != null && binding.getKills() < Tier.maxKills;
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return 0x9F63ED;
+    }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        Binding binding = getBinding(stack);
+        if (binding == null)
+            return 1;
+
+        return Math.round((float) binding.getKills() * 13.0F / (float) Tier.maxKills);
+    }
+
 }
