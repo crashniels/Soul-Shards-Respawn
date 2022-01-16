@@ -2,6 +2,7 @@ package info.tehnut.soulshards.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import info.tehnut.soulshards.SoulShards;
+import info.tehnut.soulshards.SoulShardsClient;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -18,7 +19,7 @@ public class SoulShardsForge {
 
     @SubscribeEvent
     public void setupClient(FMLClientSetupEvent event) {
-        SoulShardsForgeClient.initClient();
+        SoulShardsClient.initClient();
     }
     
 }

@@ -30,6 +30,11 @@ run/
 /.metadata/
 /.settings/
 /libs/
+/fabric/bin/
+/forge/bin/
+/fabric/.settings/
+/forge/.settings/
+/common/.settings/
 
 # File Extensions
 *.psd
