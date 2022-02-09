@@ -78,13 +78,13 @@ public class BlockEntitySoulCage extends BlockEntity {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
+    public void writeNbt(NbtCompound tag) {
         ItemStack shardStack = inventory.getStack(0);
         if (!shardStack.isEmpty())
             tag.put("shard", shardStack.writeNbt(new NbtCompound()));
         tag.putBoolean("active", active);
 
-        return super.writeNbt(tag);
+        super.writeNbt(tag);
     }
 
     private static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {

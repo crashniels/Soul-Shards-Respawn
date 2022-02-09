@@ -27,6 +27,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -68,7 +69,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 return ActionResult.PASS;
 
             try {
-                Identifier entityId = ((MixinMobSpawnerLogic) spawner.getLogic()).getEntityIdentifier(context.getWorld(), context.getBlockPos());
+                Identifier entityId = new Identifier(MixinMobSpawnerLogic.getSpawnEntry().getNbt().getString("id"));
                 if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
                     return ActionResult.PASS;
 
