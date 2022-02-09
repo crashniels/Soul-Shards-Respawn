@@ -1,14 +1,12 @@
 package info.tehnut.soulshards.fabric.mixin;
 
-import info.tehnut.soulshards.fabric.core.EventHandler;
+import info.tehnut.soulshards.core.util.fabric.CageBornTagHandlerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -19,9 +17,9 @@ public class MixinEntityLiving {
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void registerDataTracker(CallbackInfo callbackInfo) {
-        TrackedData<Boolean> _cageBornTag = CageBornTagHandler.getTrackedDataCageBorn();
+        TrackedData<Boolean> _cageBornTag;
         _cageBornTag = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-        CageBornTagHandler.setTrackedDataCageBorn(_cageBornTag);
+        CageBornTagHandlerImpl.setTrackedDataCageBorn(_cageBornTag);
     }
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
@@ -30,18 +28,9 @@ public class MixinEntityLiving {
         if (entity instanceof PlayerEntity)
             return;
 
-        TrackedData<Boolean> _cageBornTag = CageBornTagHandler.getTrackedDataCageBorn();
+        TrackedData<Boolean> _cageBornTag = CageBornTagHandlerImpl.getTrackedDataCageBorn();
         entity.getDataTracker().startTracking(_cageBornTag, false);
-        CageBornTagHandler.setTrackedDataCageBorn(_cageBornTag);
+        CageBornTagHandlerImpl.setTrackedDataCageBorn(_cageBornTag);
     }
-
-    @Inject(method = "onDeath", at = @At("HEAD"))
-    private void onDeathEvent(DamageSource source, CallbackInfo callbackInfo) {
-        LivingEntity entity = (LivingEntity) (Object) this;
-        if (entity instanceof PlayerEntity)
-            return;
-
-        EventHandler.onEntityDeath(entity, source);
-    }
-
+    
 }

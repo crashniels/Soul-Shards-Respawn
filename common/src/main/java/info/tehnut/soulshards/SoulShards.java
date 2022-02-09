@@ -2,6 +2,7 @@ package info.tehnut.soulshards;
 
 import com.google.gson.reflect.TypeToken;
 import dev.architectury.platform.Platform;
+import info.tehnut.soulshards.core.EventHandler;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Tier;
 import info.tehnut.soulshards.core.util.JsonUtil;
@@ -23,6 +24,7 @@ public class SoulShards {
         RegistrarSoulShards.ITEMS.register();
         RegistrarSoulShards.BLOCK_ENTITY_TYPES.register();
         RegistrarSoulShards.ENCHANTMENTS.register();
+        EventHandler.init();
     }
 
 }

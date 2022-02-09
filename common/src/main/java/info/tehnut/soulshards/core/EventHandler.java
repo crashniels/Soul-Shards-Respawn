@@ -1,77 +1,61 @@
-package info.tehnut.soulshards.fabric.core;
+package info.tehnut.soulshards.core;
 
-import java.util.Set;
-
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.EntityEvent;
+import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.registry.registries.Registries;
 import info.tehnut.soulshards.ConfigSoulShards;
 import info.tehnut.soulshards.SoulShards;
+import info.tehnut.soulshards.api.IBinding;
 import info.tehnut.soulshards.api.ISoulWeapon;
-import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.MultiblockPattern;
 import info.tehnut.soulshards.core.data.Tier;
-import info.tehnut.soulshards.fabric.core.util.CageBornTagHandler;
-import info.tehnut.soulshards.fabric.api.BindingEvent;
+import info.tehnut.soulshards.api.BindingEvent;
+import info.tehnut.soulshards.api.CageSpawnEvent;
+import info.tehnut.soulshards.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.item.ItemSoulShard;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Set;
 
 public class EventHandler {
 
     public static void init() {
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
-
-            ItemStack held = player.getStackInHand(hand);
-            if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
-                return ActionResult.PASS;
-
-            BlockState worldState = world.getBlockState(hitResult.getBlockPos());
-            if (!pattern.isOriginBlock(worldState))
-                return ActionResult.PASS;
-
-            TypedActionResult<Set<BlockPos>> match = pattern.match(world, hitResult.getBlockPos());
-            if (match.getResult() == ActionResult.FAIL)
-                return match.getResult();
-
-            match.getValue().forEach(matchedPos -> world.breakBlock(matchedPos, false));
-            held.decrement(1);
-            ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
-            if (!player.getInventory().insertStack(shardStack))
-                ItemScatterer.spawn(world, player.getX(), player.getY(), player.getZ(), shardStack);
-            return ActionResult.SUCCESS;
-        });
+        InteractionEvent.RIGHT_CLICK_BLOCK.register(EventHandler::onRightClickBlock);
+        EntityEvent.LIVING_DEATH.register(EventHandler::onEntityDeath);
+        CageSpawnEvent.EVENT.register(EventHandler::onCageSpawn);
+        BindingEvent.NEW_BINDINGS.register(EventHandler::onNewBinding);
+        BindingEvent.GAIN_SOULS.register(EventHandler::getGainedSouls);
+        BindingEvent.GET_ENTITY_ID.register(EventHandler::getEntityName);
     }
 
-    public static void onEntityDeath(LivingEntity killed, DamageSource source) {
+    public static EventResult onEntityDeath(LivingEntity killed, DamageSource source) {
         if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !killed.canUsePortals())
-            return;
+            return EventResult.interruptDefault();
 
         if (!SoulShards.CONFIG.getBalance().countCageBornForShard() &&
                 CageBornTagHandler.getCageBornTag(killed))
-            return;
+            return EventResult.interruptDefault();
 
-        if (source.getAttacker() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) source.getAttacker();
+        if (source.getAttacker() instanceof PlayerEntity player) {
             Identifier entityId = getEntityId(killed);
 
             if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
-                return;
+                return EventResult.interruptDefault();
 
             ItemStack shardStack = getFirstShard(player, entityId);
             if (shardStack.isEmpty())
-                return;
+                return EventResult.interruptDefault();
 
             ItemSoulShard shard = (ItemSoulShard) shardStack.getItem();
             Binding binding = shard.getBinding(shardStack);
@@ -79,7 +63,7 @@ public class EventHandler {
                 binding = getNewBinding(killed);
 
             if (binding == null)
-                return;
+                return EventResult.interruptDefault();
 
             ItemStack mainHand = player.getStackInHand(Hand.MAIN_HAND);
             int soulsGained = 1 + EnchantmentHelper.getLevel(RegistrarSoulShards.SOUL_STEALER.get(), mainHand);
@@ -95,7 +79,9 @@ public class EventHandler {
                 binding.setOwner(player.getGameProfile().getId());
 
             shard.updateBinding(shardStack, binding.addKills(soulsGained));
+
         }
+        return EventResult.interruptTrue();
     }
 
     private static ItemStack getFirstShard(PlayerEntity player, Identifier entityId) {
@@ -130,7 +116,7 @@ public class EventHandler {
     }
 
     private static Identifier getEntityId(LivingEntity entity) {
-        Identifier id = Registry.ENTITY_TYPE.getId(entity.getType());
+        Identifier id = Registries.getId(entity.getType(), Registry.ENTITY_TYPE);
         return BindingEvent.GET_ENTITY_ID.invoker().getEntityName(entity, id);
     }
 
@@ -139,4 +125,42 @@ public class EventHandler {
         return (Binding) BindingEvent.NEW_BINDINGS.invoker().onNewBinding(entity, binding).getValue();
     }
 
+    private static EventResult onCageSpawn(IBinding binding, ItemStack shardStack, LivingEntity toSpawn) {
+        return EventResult.interruptTrue();
+    }
+
+    private static EventResult onRightClickBlock(PlayerEntity player, Hand hand, BlockPos blockPos, Direction direction) {
+        MultiblockPattern pattern = ConfigSoulShards.getMultiblock();
+
+        ItemStack held = player.getStackInHand(hand);
+        if (!ItemStack.areItemsEqual(pattern.getCatalyst(), held))
+            return EventResult.pass();
+
+        BlockState worldState = player.world.getBlockState(blockPos);
+        if (!pattern.isOriginBlock(worldState))
+            return EventResult.pass();
+
+        TypedActionResult<Set<BlockPos>> match = pattern.match(player.world, blockPos);
+        if (match.getResult() == ActionResult.FAIL)
+            return EventResult.interruptDefault();
+
+        match.getValue().forEach(matchedPos -> player.world.breakBlock(matchedPos, false));
+        held.decrement(1);
+        ItemStack shardStack = new ItemStack(RegistrarSoulShards.SOUL_SHARD.get());
+        if (!player.getInventory().insertStack(shardStack))
+            ItemScatterer.spawn(player.world, player.getX(), player.getY(), player.getZ(), shardStack);
+        return EventResult.interruptTrue();
+    }
+
+    private static TypedActionResult<IBinding> onNewBinding(LivingEntity entity, IBinding binding) {
+        return new TypedActionResult<>(ActionResult.PASS, binding);
+    }
+
+    private static int getGainedSouls(LivingEntity entity, IBinding binding, int amount) {
+        return amount;
+    }
+
+    private static Identifier getEntityName(LivingEntity entity, Identifier currentName) {
+        return currentName;
+    }
 }

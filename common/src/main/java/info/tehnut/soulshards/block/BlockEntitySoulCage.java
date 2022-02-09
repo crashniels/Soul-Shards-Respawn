@@ -1,13 +1,21 @@
 package info.tehnut.soulshards.block;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.event.EventResult;
+import dev.architectury.registry.registries.Registries;
 import info.tehnut.soulshards.SoulShards;
+import info.tehnut.soulshards.api.CageSpawnEvent;
 import info.tehnut.soulshards.api.IShardTier;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
+import info.tehnut.soulshards.core.util.CageBornTagHandler;
 import info.tehnut.soulshards.item.ItemSoulShard;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -15,6 +23,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.LightType;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 
 public class BlockEntitySoulCage extends BlockEntity {
@@ -75,14 +87,52 @@ public class BlockEntitySoulCage extends BlockEntity {
         return super.writeNbt(tag);
     }
 
-    @ExpectPlatform
     private static void spawnEntities(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-        throw new AssertionError();
+        Binding binding = BlockEntitySoulCage.getBinding();
+        if (binding == null || binding.getBoundEntity() == null)
+            return;
+
+        EntityType<?> entityType = Registries.get(SoulShards.MOD_ID).get(Registry.ENTITY_TYPE).get(binding.getBoundEntity());
+        IShardTier tier = binding.getTier();
+        spawnLoop:
+        for (int i = 0; i < tier.getSpawnAmount(); i++) {
+            for (int attempts = 0; attempts < 5; attempts++) {
+
+                double x = blockPos.getX() + (world.random.nextDouble() - world.random.nextDouble()) * 4.0D;
+                double y = blockPos.getY() + world.random.nextInt(3) - 1;
+                double z = blockPos.getZ() + (world.random.nextDouble() - world.random.nextDouble()) * 4.0D;
+                BlockPos spawnAt = new BlockPos(x, y, z);
+
+                LivingEntity entityLiving = (LivingEntity) entityType.create(world);
+                if (entityLiving == null)
+                    continue;
+
+                if (tier.checkLight() && !canSpawnInLight(entityLiving, spawnAt, world))
+                    continue;
+
+                entityLiving.refreshPositionAndAngles(spawnAt, world.random.nextFloat() * 360F, 0F);
+                CageBornTagHandler.setCageBornTag(entityLiving, true);
+
+                if (entityLiving.isAlive() && !hasReachedSpawnCap(entityLiving, blockPos, world) && !isColliding(entityLiving, world)) {
+                    if (!SoulShards.CONFIG.getBalance().allowBossSpawns() && !entityLiving.canUsePortals()) // canUsePortals -> isNonBoss
+                        continue;
+
+                    EventResult result = CageSpawnEvent.EVENT.invoker().onCageSpawn(binding, BlockEntitySoulCage.getInventory().getStack(0), entityLiving);
+                    if (result == EventResult.pass())
+                        continue spawnLoop;
+
+                    world.spawnEntity(entityLiving);
+                    if (entityLiving instanceof MobEntity)
+                        ((MobEntity) entityLiving).initialize((ServerWorldAccess) world, world.getLocalDifficulty(blockPos), SpawnReason.SPAWNER, null, null);
+                    break;
+                }
+            }
+        }
     }
 
     private static TypedActionResult<Binding> canSpawn(World world, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
         // TODO mojang pls
-        //if (!getWorld().getServer().getWorld(DimensionType.OVERWORLD_ID).getGameRules().getBoolean(SoulShards.allowCageSpawns))
+        //if (!world.getServer().getWorld(world.getRegistryKey()).getGameRules().getBoolean(SoulShards.allowCageSpawns))
         //    return new TypedActionResult<>(ActionResult.FAIL, null);
 
         if (blockState.getBlock() != RegistrarSoulShards.SOUL_CAGE.get())
@@ -142,5 +192,21 @@ public class BlockEntitySoulCage extends BlockEntity {
 
     public static Inventory getInventory() {
         return inventory;
+    }
+
+    private static boolean canSpawnInLight(LivingEntity entityLiving, BlockPos pos, World world) {
+        return !(entityLiving instanceof Monster) || world.getLightLevel(LightType.BLOCK, pos) <= 8;
+    }
+
+    private static boolean hasReachedSpawnCap(LivingEntity living, BlockPos blockPos, World world) {
+        Box box = new Box(blockPos.getX() - 16, blockPos.getY() - 16, blockPos.getZ() - 16, blockPos.getX() + 16, blockPos.getY() + 16, blockPos.getZ() + 16);
+
+        int mobCount = world.getEntitiesByClass(living.getClass(), box, e -> e != null &&
+                CageBornTagHandler.getCageBornTag(living)).size();
+        return mobCount >= SoulShards.CONFIG.getBalance().getSpawnCap();
+    }
+
+    private static boolean isColliding(LivingEntity entity, World world) {
+        return world.isSpaceEmpty(entity.getBoundingBox()) && world.getEntitiesByClass(LivingEntity.class, entity.getBoundingBox(), e -> true).isEmpty();
     }
 }
