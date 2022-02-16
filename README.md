@@ -1,4 +1,7 @@
 # Soul-Shards-Respawn
 
-A fork of the 1.15 fabric version to run with 1.16.5. 
+An unofficial continuation to Minecraft versions past 1.15+.
 
+# Licence
+
+MIT in case the LICENCE file goes missing again...
