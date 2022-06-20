@@ -2,6 +2,15 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    forge {
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+    }
+}
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
@@ -75,12 +84,6 @@ publishing {
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
         // Add repositories to publish to here.
-    }
-}
-
-loom {
-    forge {
-        mixinConfig "soulshards-common.mixins.json"
     }
 }
 

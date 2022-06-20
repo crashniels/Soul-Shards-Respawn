@@ -13,4 +13,5 @@ public class CageBornTagHandler {
     public static boolean getCageBornTag(LivingEntity livingEntity){
         throw new AssertionError();
     }
+
 }

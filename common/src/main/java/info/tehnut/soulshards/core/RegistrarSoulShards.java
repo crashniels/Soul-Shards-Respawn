@@ -27,6 +27,9 @@ public class RegistrarSoulShards {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(SoulShards.MOD_ID, Registry.BLOCK_ENTITY_TYPE_KEY);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(SoulShards.MOD_ID, Registry.ENCHANTMENT_KEY);
 
+    /*
+        Register ItemGroup
+    */
     public static final ItemGroup SoulShardsIG = CreativeTabRegistry.create(
             new Identifier(SoulShards.MOD_ID, "soulshards"),
             () -> new ItemStack(RegistrarSoulShards.VILE_SWORD.get()));
@@ -60,6 +63,5 @@ public class RegistrarSoulShards {
         Register BlockItems
     */
     public static final RegistrySupplier<Item> SOUL_CAGE_BI = ITEMS.register("soul_cage", () -> new BlockItem(SOUL_CAGE.get(), new Item.Settings().group(RegistrarSoulShards.SoulShardsIG)));
-
 
 }

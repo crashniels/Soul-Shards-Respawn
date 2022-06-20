@@ -2,6 +2,10 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }

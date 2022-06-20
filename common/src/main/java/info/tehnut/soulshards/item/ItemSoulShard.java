@@ -8,7 +8,6 @@ import info.tehnut.soulshards.block.BlockEntitySoulCage;
 import info.tehnut.soulshards.core.RegistrarSoulShards;
 import info.tehnut.soulshards.core.data.Binding;
 import info.tehnut.soulshards.core.data.Tier;
-import info.tehnut.soulshards.core.mixin.MixinMobSpawnerLogic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
@@ -69,7 +68,7 @@ public class ItemSoulShard extends Item implements ISoulShard {
                 return ActionResult.PASS;
 
             try {
-                Identifier entityId = new Identifier(MixinMobSpawnerLogic.getSpawnEntry().getNbt().getString("id"));
+                Identifier entityId = new Identifier(spawner.getLogic().spawnEntry.getNbt().getString("id"));
                 if (!SoulShards.CONFIG.getEntityList().isEnabled(entityId))
                     return ActionResult.PASS;
 
